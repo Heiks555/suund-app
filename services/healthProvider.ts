@@ -83,12 +83,10 @@ export const DEFAULT_PROVIDER_SOURCE: HealthProviderSource =
 
 function getHealthProviderConfig(): HealthProviderConfig {
   const baseUrl = readEnv('EXPO_PUBLIC_OPEN_WEARABLES_BASE_URL') ?? 'https://backend-production-21d7.up.railway.app';
-  const isWeb = typeof window !== 'undefined' && typeof window.location !== 'undefined';
-  const proxyBaseUrl = isWeb ? 'http://localhost:3001' : baseUrl;
 
   return {
     source: DEFAULT_PROVIDER_SOURCE,
-    baseUrl: proxyBaseUrl,
+    baseUrl,
     apiKey: readEnv('EXPO_PUBLIC_OPEN_WEARABLES_API_KEY'),
     userId: readEnv('EXPO_PUBLIC_OPEN_WEARABLES_USER_ID'),
   };
