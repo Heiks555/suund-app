@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 import { HealthDashboardSnapshot } from './healthProvider';
 
 export interface ClaudeAnalysis {
@@ -12,8 +14,11 @@ interface CacheEntry {
 }
 
 const CACHE_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
+const DEVICE_ID_KEY = 'suund_device_id';
+const DEFAULT_HEALTH_MCP_URL = 'https://health-mcp-production.up.railway.app';
 
 let _cache: CacheEntry | null = null;
+let _cachedDeviceId: string | null = null;
 
 function readEnv(name: string): string | undefined {
   const candidates: Array<string | undefined> = [];
@@ -38,6 +43,50 @@ function readEnv(name: string): string | undefined {
   return undefined;
 }
 
+// Not cryptographically strong, and doesn't need to be — this only identifies a
+// device for per-user rate limiting, not authentication.
+function generateUuidV4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+    const rand = (Math.random() * 16) | 0;
+    const value = char === 'x' ? rand : (rand & 0x3) | 0x8;
+    return value.toString(16);
+  });
+}
+
+// expo-secure-store has no native web implementation. Fall back to localStorage there
+// so the web preview (used for local dev, see AGENTS.md) keeps working.
+async function readPersistedDeviceId(): Promise<string | null> {
+  if (Platform.OS === 'web') {
+    if (typeof localStorage === 'undefined') return null;
+    return localStorage.getItem(DEVICE_ID_KEY);
+  }
+  return SecureStore.getItemAsync(DEVICE_ID_KEY);
+}
+
+async function persistDeviceId(id: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem(DEVICE_ID_KEY, id);
+    return;
+  }
+  await SecureStore.setItemAsync(DEVICE_ID_KEY, id);
+}
+
+async function getOrCreateDeviceId(): Promise<string> {
+  if (_cachedDeviceId) return _cachedDeviceId;
+
+  const existing = await readPersistedDeviceId();
+  if (existing) {
+    _cachedDeviceId = existing;
+    return existing;
+  }
+
+  const created = generateUuidV4();
+  await persistDeviceId(created);
+  _cachedDeviceId = created;
+  return created;
+}
+
 function buildSnapshotKey(snapshot: HealthDashboardSnapshot): string {
   const sleep = snapshot.sleep[0];
   const heart = snapshot.heart[0];
@@ -51,64 +100,40 @@ function buildSnapshotKey(snapshot: HealthDashboardSnapshot): string {
   });
 }
 
-function buildUserMessage(snapshot: HealthDashboardSnapshot): string {
+// Matches the shape health-mcp's /api/analyze expects (services/claudeProxy.js
+// buildHealthContextLine there). The system prompt and Estonian phrasing now live
+// server-side — this just forwards today's numbers.
+function buildHealthDataPayload(snapshot: HealthDashboardSnapshot) {
   const sleep = snapshot.sleep[0];
   const heart = snapshot.heart[0];
   const activity = snapshot.activity[0];
 
-  const parts: string[] = [];
-
-  if (sleep) {
-    parts.push(`Uni: ${sleep.durationHours.toFixed(1)}h`);
-    if (sleep.efficiencyPercent != null) {
-      parts.push(`une efektiivsus: ${sleep.efficiencyPercent}%`);
-    }
-    if (sleep.stages?.deepMinutes != null) {
-      parts.push(`sügav uni: ${sleep.stages.deepMinutes} min`);
-    }
-    if (sleep.stages?.remMinutes != null) {
-      parts.push(`REM: ${sleep.stages.remMinutes} min`);
-    }
-  } else {
-    parts.push('uneandmed puuduvad');
-  }
-
-  if (heart?.hrvRmssdMs != null) {
-    parts.push(`HRV: ${heart.hrvRmssdMs.toFixed(0)} ms`);
-  } else {
-    parts.push('HRV andmed puuduvad');
-  }
-
-  if (heart?.restingHeartRateBpm != null) {
-    parts.push(`pulss puhkeolekus: ${heart.restingHeartRateBpm.toFixed(0)} lööki/min`);
-  }
-
-  if (activity?.steps != null) {
-    parts.push(`sammud tänaseni: ${activity.steps.toLocaleString()}`);
-  }
-
-  if (activity?.activeMinutes != null) {
-    parts.push(`aktiivne aeg: ${activity.activeMinutes} min`);
-  }
-
-  return parts.join('; ');
+  return {
+    sleep: sleep
+      ? {
+          durationHours: sleep.durationHours,
+          efficiencyPercent: sleep.efficiencyPercent,
+          stages: sleep.stages
+            ? { deepMinutes: sleep.stages.deepMinutes, remMinutes: sleep.stages.remMinutes }
+            : undefined,
+        }
+      : undefined,
+    heart: heart
+      ? { hrvRmssdMs: heart.hrvRmssdMs, restingHeartRateBpm: heart.restingHeartRateBpm }
+      : undefined,
+    activity: activity
+      ? { steps: activity.steps, activeMinutes: activity.activeMinutes }
+      : undefined,
+  };
 }
 
-const SYSTEM_PROMPT = `Sa oled tervisnõustaja. Anna lühike hommikukokkuvõte kasutaja terviseandmete põhjal.
-
-Reeglid:
-- Ole otsekohene ja aus – mitte üldjuhul innustav. Kui andmed on halvad, ütle seda selgelt.
-- Anna üks konkreetne tegevussoovitus tänaseks (näiteks: treeni kergelt, mine vara magama, joo rohkem vett). Mitte üldine nõuanne.
-- Kokku maksimaalselt 3–4 lauset.
-- Viimane rida PEAB algama täpselt nii: "Märksõnad:" ja sisaldama 2–3 lühikest märksõna komaga eraldatult (nt "Märksõnad: Unevõlg 1.2h, Treeni kergelt, HRV madal").
-- Kui andmeid pole, tunnista seda ausalt – ära leiuta numbreid.
-- Vasta AINULT eesti keeles.`;
-
 export async function getMorningSummary(snapshot: HealthDashboardSnapshot): Promise<ClaudeAnalysis> {
-  const apiKey = readEnv('EXPO_PUBLIC_ANTHROPIC_API_KEY');
-  if (!apiKey) {
-    throw new Error('EXPO_PUBLIC_ANTHROPIC_API_KEY on seadistamata.');
+  const appKey = readEnv('EXPO_PUBLIC_SUUND_APP_KEY');
+  if (!appKey) {
+    throw new Error('EXPO_PUBLIC_SUUND_APP_KEY on seadistamata.');
   }
+
+  const baseUrl = readEnv('EXPO_PUBLIC_HEALTH_MCP_URL') ?? DEFAULT_HEALTH_MCP_URL;
 
   const snapshotKey = buildSnapshotKey(snapshot);
 
@@ -120,56 +145,31 @@ export async function getMorningSummary(snapshot: HealthDashboardSnapshot): Prom
     return _cache.analysis;
   }
 
-  const userMessage = buildUserMessage(snapshot);
+  const deviceId = await getOrCreateDeviceId();
+  const healthData = buildHealthDataPayload(snapshot);
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch(`${baseUrl}/api/analyze`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
+      'X-Suund-App-Key': appKey,
+      'X-Suund-User-Id': deviceId,
     },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 350,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: `Terviseandmed: ${userMessage}. Anna hommikukokkuvõte.`,
-        },
-      ],
-    }),
+    body: JSON.stringify({ healthData }),
   });
+
+  if (response.status === 429) {
+    throw new Error('Oled tänase AI-küsimuste limiidi täis.');
+  }
 
   if (!response.ok) {
     const body = await response.text().catch(() => '');
-    throw new Error(`Claude API viga ${response.status}${body ? `: ${body}` : ''}`);
+    throw new Error(`Terviseanalüüsi päring ebaõnnestus (${response.status})${body ? `: ${body}` : ''}`);
   }
 
-  const data = (await response.json()) as {
-    content: Array<{ type: string; text: string }>;
-  };
+  const data = (await response.json()) as ClaudeAnalysis;
+  const analysis: ClaudeAnalysis = { summary: data.summary, tags: data.tags ?? [] };
 
-  const rawText = data.content.find((b) => b.type === 'text')?.text?.trim() ?? '';
-
-  const lines = rawText.split('\n').filter((l) => l.trim().length > 0);
-
-  let summary = rawText;
-  let tags: string[] = [];
-
-  const tagLineIndex = lines.findIndex((l) => l.startsWith('Märksõnad:'));
-  if (tagLineIndex !== -1) {
-    const tagLine = lines[tagLineIndex].replace('Märksõnad:', '').trim();
-    tags = tagLine
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-    summary = lines.slice(0, tagLineIndex).join('\n').trim();
-  }
-
-  const analysis: ClaudeAnalysis = { summary, tags };
   _cache = { analysis, snapshotKey, timestamp: Date.now() };
 
   return analysis;
