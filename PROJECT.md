@@ -82,6 +82,53 @@ only thing that can't be forked.
 - **Security:** Claude API key is server-side (health-mcp proxy), never in the app bundle.
   Rate limits + tiers enforced on the SERVER, not the client.
 
+### 2.1 APPLE DEVELOPER ACCOUNT + LEGAL ENTITY (decided 2026-07-21)
+
+- **Individual enrollment was REJECTED.** Apple Developer Support (case 102940609523) gave
+  no reason — "for one or more reasons, your enrollment couldn't be completed." Attempted on
+  the founder's personal Apple ID. This remains UNRESOLVED; the path below routes around it
+  rather than fixing it.
+- **Path taken: Organization enrollment via 1Eritood OÜ** — an existing company belonging to
+  Jost Sisask. No new company needed now, which avoids a ~4-week D-U-N-S wait.
+- **D-U-N-S: 536399495.** Already existed — the long pole disappeared. Legal name as held by
+  D&B is **"1Eritood OU"** — ASCII, no diacritics, "OU" not "OÜ". Must be entered EXACTLY
+  this way; do not "correct" it, it has to match the D&B record.
+- **Account Holder = Jost** (Apple verifies legal authority to bind the entity; he is the
+  registered representative). **Heigo = Admin.** Apple ID for the account holder:
+  `dev@suund.app`, created under Jost's identity, 2FA on, Jost's trusted phone number.
+- **Consequence to plan around:** only the Account Holder can accept Apple agreements
+  (Paid Applications Agreement and every update Apple pushes), manage banking/tax, and apply
+  to the 15% small-business program. Releases can stall waiting on Jost. Day-to-day work
+  (builds, TestFlight, App Store Connect, versions) runs fine from the Admin seat.
+- **Company website for enrollment:** 1eritood.ee. Apple often phones the entity's public
+  number to verify — an unanswered call delays review by weeks.
+- **Ownership:** app and revenue legally sit with 1Eritood OÜ. Arrangement with Jost is
+  settled between them; he is on paper, Heigo does all the work.
+- **Future: Suund OÜ.** When money starts moving, register it (OÜ, not UÜ). A second entity
+  CANNOT be added to the existing Apple account — it needs its **own D-U-N-S (start that
+  4-week clock the day the company is registered), its own $99 enrollment, then an app
+  transfer** from 1Eritood. Transfer requires at least one released version and the receiving
+  account to have accepted the agreements.
+
+### 2.2 DOMAIN, EMAIL, HOSTING (decided 2026-07-21)
+
+- **Domain + email at Namecheap. Website hosted elsewhere.** Deliberate split.
+- **Email: Namecheap Private Email**, mailbox `dev@suund.app`, IMAP into Outlook (Mac +
+  phone). ~$12–24/yr vs €100/yr at Zone. SPF and DKIM pass; DMARC `p=none` added.
+  Note: this mailbox is the identity anchor for the Apple developer account — whoever holds
+  it can reset the account. Namecheap account 2FA is enabled.
+- **Website: Lovable → GitHub → Cloudflare Pages**, pointed by CNAME. **DNS stays at
+  Namecheap**, so MX/SPF/DKIM/DMARC are untouched and email can't break. Free, auto-deploys
+  on push, no commercial-use restriction.
+- **Rejected:** Vercel Hobby (prohibits commercial use — a paid app violates it on day one);
+  Lovable's own custom domain (requires Pro, $25/mo ≈ $300/yr); Namecheap shared hosting
+  (works, but every change is a manual export + FTP upload, plus .htaccess SPA rewrites).
+- **Trap to remember:** if DNS ever moves to Cloudflare, MX/SPF/DKIM/DMARC must move with it
+  or email dies the moment the site goes live.
+- **Later:** bulk/marketing email (the lead-magnet list) must NOT be sent from the main
+  domain or this mailbox — separate subdomain + a real sending service, or the domain's
+  reputation takes normal mail down with it.
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
@@ -132,7 +179,7 @@ trying to do five things at once.
 ## 4. BUILD ORDER (what blocks what)
 
 Done: Etapp 0 (setup, both machines) · Etapp 1 (OW + MCP + Claude, real data) ·
-Backend proxy (key server-side, rate limits).
+Backend proxy (key server-side, rate limits) · Domain/email infrastructure (2026-07-21).
 
 NEXT:
 1. Product design conversations per screen (Training -> Habits -> Trends -> Profile).
@@ -141,7 +188,10 @@ NEXT:
    Each day without them = data lost forever. Must be best-in-class per layer.
 4. Trends charts (seed data, now) — correlations later (real data).
 5. Apple Health sync (founder's Apple Watch — only works on real device, not browser).
-6. TestFlight — BLOCKED ONLY by Apple Developer account (enrollment failed, contacted support).
+   NOT blocked by the Apple account situation: Xcode free provisioning installs to your own
+   device (cert refreshes every 7 days), which is enough to test Health sync.
+6. TestFlight — waiting on Organization enrollment review (days to ~2 weeks). No longer
+   "blocked by a failed enrollment"; a viable path is in motion.
 
 APP STORE (not TestFlight) prerequisites, plan ahead:
 - User accounts (app currently reads OW's "first user" = founder's own).
@@ -149,6 +199,7 @@ APP STORE (not TestFlight) prerequisites, plan ahead:
 These block App Store, NOT TestFlight.
 
 Why order matters: log-layers early (irreplaceable data), correlations late (need that data).
+**Items 1–5 are not blocked by Apple.** Don't idle waiting on the enrollment review.
 
 ---
 
@@ -165,6 +216,11 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
 - Onboarding flow — first impression, not designed.
 - B2B angle (sports clubs, corporate wellness, trainers) — interesting, better revenue/client
   than B2C, not current focus.
+- **When to form Suund OÜ and transfer the app.** Trigger is "money starts moving," but the
+  D-U-N-S clock is ~4 weeks and app transfer needs a released version — so the decision has
+  to be made earlier than the trigger suggests.
+- **Founder's own Apple identity.** The Individual rejection is unresolved. If the brand is
+  the moat and the brand is Heigo, the account eventually needs to sit under his own entity.
 
 ---
 
@@ -178,12 +234,18 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   EXPO_PUBLIC_ANTHROPIC_API_KEY removed from app entirely.
 - AGENTS.md + /orient + /wrap skills in both repos.
 - Name/domain/pricing/positioning locked. Competitor analysis done.
+- **2026-07-21** — Apple Individual enrollment rejected; pivoted to Organization enrollment
+  via 1Eritood OÜ. D-U-N-S 536399495 found (existing, no 4-week wait). Namecheap Private
+  Email set up: dev@suund.app live, IMAP on Mac + phone, SPF/DKIM pass, DMARC p=none, account
+  2FA on. Hosting decided: Cloudflare Pages via Lovable→GitHub, DNS stays at Namecheap.
+  Vercel and Lovable-hosting rejected on cost/terms.
 
 ---
 
 ## HOW THIS FILE STAYS ALIVE
 
-- Planning sessions (chat): decisions land here (Claude updates this file).
+- Lives in the **suund-app repo root**, synced to the claude.ai project from GitHub.
+- Planning sessions (chat): decisions land here (Claude updates this file in the repo).
 - Build sessions (Claude Code): /orient at start, /wrap at end maintain AGENTS.md (technical).
-  This file (PROJECT.md) is updated by Claude in planning chats.
+  /wrap's git commit sweeps up PROJECT.md changes too — no separate command needed.
 - Two brains, clear split: PROJECT.md = what & why, AGENTS.md = how. Nothing lost if both current.
