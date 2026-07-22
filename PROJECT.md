@@ -221,6 +221,28 @@ trend), Analysis references it for depth. Periodic depth + trend across tests, N
 correlation (too sparse/slow). Needs "informational, not medical advice" framing (liability +
 Apple review). Not core to the daily loop — v2 if/when needed.
 
+**TRAINING — read-only LOAD from Apple Health (revised 2026-07-22).**
+- Do NOT build a workout logger and do NOT build the plan/generator (same lesson as Eating/MFP:
+  Strong & Hevy are entrenched; a logger = double-logging = the friction users reject). Web
+  plan-generator dropped from v1 (maybe a marketing lead-magnet later).
+- Apple Health carries training LOAD only (workout type, duration, calories, HR) — NOT set/rep/
+  weight (HealthKit has no schema for it; Strong/Hevy sync summary only). That's fine: the thesis
+  needs LOAD (affects recovery + eating adequacy), not set-level progression (Strong/Hevy's job).
+- Suund out-REASONS Strong/Hevy (load × HRV × sleep × habits × nutrition), doesn't out-log them.
+- Training tab STAYS but is light/read-only: load + trend from Health. No logging, no plan.
+
+**LACTATE — v1, manual measured marker (decided 2026-07-22).**
+- A manually-entered measured marker (like HRV/bloodwork), NOT a behavioral input — no wearable
+  measures blood lactate; you enter the mmol/L value. Technically trivial (a number field).
+- 3-point protocol, all optional (log whichever you took): (1) right after a KEY session =
+  session metabolic load; (2) after recovery time = clearance (fitness/recovery); (3) morning =
+  resting baseline / readiness. Measure around ONE key session/day (not every workout).
+- Each value carries context or it's meaningless (5 mmol after an easy jog ≠ after intervals):
+  slot tag; post-training auto-links to that session's intensity (from Health); post-recovery
+  carries time-since-effort (default); morning must be consistent (fasted/rest).
+- Lives: Data (values + trend per slot) → Analysis interprets (morning trend = recovery; clearance
+  = fitness; post-training = session response). v1 BUILD-scope; still Pro-tier-gated (build ≠ tier).
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
@@ -233,23 +255,18 @@ Tabs (revised 2026-07-22, detail in 2.3): **Data · Training · Habits · Analys
 
 ### Data (rebuild — was "Home")
 - Pure vitals, synced: HRV, RHR, sleep, steps, calories + macros (from Health).
+- Manual measured markers live here too: lactate (v1, 3-point) + bloodwork (v2). Values + trends.
 - Fastest place to see HRV — sync is a button, "sync + show me now" instant. No Claude summary here.
-- Bloodwork section lives here later (v2).
 
 ### Analysis (LANDING page, designing next after Training)
 - The cached daily "why" + recommendation — the hero. Global verdict tying inputs → outputs
   (measured + subjective), incl. training-load and eating-adequacy assessment.
 - Deep archives / correlation views live here too. Detail TBD.
 
-### Training (designing — NEXT)
-- Two separate jobs, different times, must NOT be on the same view at once:
-  before/during workout ("what's on today" + log sets) vs other times ("how's my training going").
-- v1: show plan (from suund.app generator or import) · log today (exercise, set, rep, weight, RPE)
-  · previous result shown next to each ("last: 90kg x 8") — heart of the diary, stolen from Strong.
-- Plan is a DATA STRUCTURE (Supabase), one schema, three surfaces: web generator, app, Excel
-  import. Founder's 12-week Excel plan uses the same shape. Build schema once.
-- Later: training-recovery correlation (needs data first).
-- Open question: log speed (Strong-style tap-and-go) vs context (show previous, Claude hint)?
+### Training (revised 2026-07-22 — read-only load, see 2.3)
+- Light, read-only: training LOAD from Apple Health (workout type, duration, calories, HR) + trend.
+- NO workout logger, NO plan/generator (don't double-log vs Strong/Hevy; Suund out-reasons them).
+- Feeds Analysis: load → recovery, and eating-adequacy vs load.
 
 ### Habits (DESIGNED 2026-07-22 — full spec in 2.3)
 - Curated library, progressive precision, enter-once-default, two-tier tap, 4 time buckets, habit
@@ -267,7 +284,7 @@ Done: Etapp 0 (setup, both machines) · Etapp 1 (OW + MCP + Claude, real data) �
 Backend proxy (key server-side, rate limits) · Domain/email infrastructure (2026-07-21).
 
 NEXT:
-1. Product design per block: Habits ✓ (2026-07-22) → Training (in progress) → Analysis → Data.
+1. Product design per block: Habits · Training · Lactate ✓ (2026-07-22) → Analysis → Data + onboarding.
 2. Structure: design system (theme/tokens.ts, locked dark palette) + i18n — BEFORE building more
    screens. Build ON the design system from day one (don't style throwaway, then redo).
 3. Habits + Training log — build EARLY: they generate the data Analysis later needs.
@@ -293,11 +310,13 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
 
 ## 5. OPEN QUESTIONS
 
-- RESOLVED (2026-07-22): habit logging = two-tier tap + 4 time buckets + enter-once defaults
-  (see 2.3). Custom free-text habits confirmed v2.
-- Training log: speed-first (Strong) vs context-first (show previous + Claude hint)? — STILL OPEN.
-- Analysis + Data screen detail — how the daily "why" is structured; vitals layout. Not designed.
-- Eating adequacy UX — how "eating enough vs training load" is shown; profile capture for the target.
+- RESOLVED (2026-07-22): habit logging = two-tier tap + 4 buckets + enter-once defaults (see 2.3);
+  custom free-text habits = v2. Training = read-only load from Health, no logger (speed-vs-context
+  moot — we don't build a logger). Lactate = v1 manual, 3-point protocol.
+- **Pricing tiers (Free/Plus/Pro) need RE-DERIVATION** — the redesign (Eating-logger out, Training
+  read-only, lactate v1, 4 tabs) changed what sits in each layer. Separate session, with community.
+- Analysis + Data + onboarding screen detail — not designed yet (next design sessions before build).
+- Eating adequacy UX — how "eating enough vs load" is shown; profile capture for the target.
 - Bloodwork v2 — photo/PDF → Claude parse → Data section. Deferred.
 - Community — NEXT PLANNING SESSION'S TOPIC. Involving people, comparing data between users,
   leaderboards, sharing counters/streaks. This is the moat, needs its own strategy discussion.
@@ -336,7 +355,12 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   flag), v1 list; mood/energy reclassified as OUTPUTS; stress + hydration dropped. Eating =
   no logger, macros read via Apple Health (MFP-populated), job = adequacy vs training load.
   Bloodwork deferred to v2 (photo/PDF → Claude parse). Full spec in §2.3. Apple: founder to do
-  Organization enrollment at home with Jost (checklist prepared). NEXT: Training block design.
+  Organization enrollment at home with Jost (checklist prepared).
+  Training designed: read-only LOAD from Apple Health, NO workout logger, NO plan/generator (don't
+  double-log vs Strong/Hevy — Suund out-reasons, doesn't out-log). Lactate promoted to v1 (manual
+  measured marker, 3-point protocol: post-key-session / post-recovery / morning). Pricing tiers
+  flagged for re-derivation. Build estimate: ~4–8 focused weeks to TestFlight-ready v1 (long poles:
+  Habits, Apple Health native). NEXT: design Analysis + onboarding, then build (design system first).
 
 ---
 
