@@ -76,9 +76,10 @@ only thing that can't be forked.
 - **Name:** Suund. Domain: suund.app (bought). Logo: blue 3D cornflower (rukkilill) — the
   one thing in the black/blue/white palette no competitor can own. Palette: near-black
   background, cornflower blue accent (#6495ED) used ONLY where it carries meaning, white text.
-- **Home screen design:** dashboard with hierarchy. Claude's analysis is the hero (verdict
-  first, detail below, tappable chips). Metrics below as quiet evidence. Missing data shows
-  as "—" (textEmpty), NEVER a fake 0 — honesty about gaps is a core principle.
+- **App structure (revised 2026-07-22, see 2.3):** four tabs — Data · Training · Habits ·
+  Analysis (settings = gear icon). Landing = Analysis: the cached daily "why" is the hero,
+  differentiator up front. Data = pure vitals, the fastest place to see HRV. Missing data
+  shows as "—" (textEmpty), NEVER a fake 0 — honesty about gaps is a core principle.
 - **Security:** Claude API key is server-side (health-mcp proxy), never in the app bundle.
   Rate limits + tiers enforced on the SERVER, not the client.
 
@@ -129,50 +130,134 @@ only thing that can't be forked.
   domain or this mailbox — separate subdomain + a real sending service, or the domain's
   reputation takes normal mail down with it.
 
+### 2.3 PRODUCT ARCHITECTURE + HABITS DESIGN (decided 2026-07-22)
+
+**Input/output backbone — the whole app is one loop:**
+inputs (what you DO — training, habits) → outputs (how the body RESPONDS — measured HRV/RHR/
+sleep + subjective mood/energy) → Claude reasons whether they match → recommendation → you
+adjust inputs. The loop closed in one app IS the moat sentence made literal.
+- INPUT = things you do / that happen to you. Must be loggable (event/quantity). Subjective,
+  unmeasurable things are NOT valid inputs.
+- OUTPUT = the body's response. MAY be subjective (mood, energy) — output is the target you
+  move, not a driver.
+
+**Tabs: Data · Training · Habits · Analysis** (settings = a gear icon, not a tab). Replaces the
+old 5-tab Home/Trends/Training/Habits/Profile.
+- **Landing = Analysis.** Open the app, immediately get the "why" — differentiator up front
+  (rivals lead with data = commodity). The morning verdict is computed ONCE after the overnight
+  sync and CACHED, so every open that day shows it instantly, zero extra API call/latency. (The
+  3/day free limit is for interactive questions, not this daily summary.)
+- **Data = pure vitals** (HRV, RHR, sleep, steps + macros from Health). Fastest place to see
+  HRV — you open Suund, not Apple Health. NO mini Claude summary here (kept pure and instant).
+- Old "Trends" tab folds into Analysis + per-block archives.
+
+**Two summary levels:**
+- Block summary (PULL) = your data archive per block, filterable (time, count, period). Base
+  view = calendar heatmap (Oura/GitHub style, shade = amount); rings/timeline secondary. Streaks
+  MAY show but are NOT the core — diary, not scoreboard, no streak-shaming.
+- Global verdict (PUSH) = Analysis tab: the cached daily "why" + recommendation, thorough.
+
+**Usability north-star (the anti-WP law):** self-evident, zero manual. A 15-year-old opens the
+app and instantly knows what to do. Every screen must pass "can a novice tell what to do here in
+3 seconds?" WP failed exactly here.
+
+**HABITS — full design:**
+- **Curated predefined library; user activates only their subset.** NOT a free-text "add any
+  habit" box (breaks Claude's reasoning — it can correlate alcohol→HRV because it knows what
+  alcohol is; it can't reason about "violin practice"). Free-text custom = v2. Library may be
+  broad (breadth is cheap: filter = "affects output + Claude-legible", NOT popularity) as long
+  as every item passes the filter; the user's screen stays lean. Onboarding shows the common
+  few, "more" reveals the rest (avoid choice overload).
+- **Progressive precision:** the FACT is required (tap = it happened), DEPTH is optional
+  (quantity, dose, bucket, note). Lazy user taps; aware user adds detail. Same app, user picks
+  depth. Base fact-correlations are always solid; depth-correlations are as good as the user's
+  detail — Claude works with what's there, shows "—" for gaps.
+- **Enter-once-becomes-default:** anything stable (dose, typical quantity, bucket, stack
+  membership) is set ONCE and auto-applied — daily logging is one tap. Separates CONFIG (rare,
+  detailed) from LOG (daily, instant). Aware user front-loads detail at setup → logs as fast as
+  the lazy user. Quantity is never daily friction.
+- **Two-tier interaction:** tap = log the default/fact; long-press/expand = adjust quantity/
+  time/deselect. One tap for the common case, expand for the exception.
+- **Time = 4 coarse buckets** (morning / noon / evening / late-night), NOT minute timestamps.
+  Default bucket = current time. Late-night exists because it's the highest-impact window for
+  sleep (alcohol at 23:00 ≠ 19:00).
+- **Habit TYPES (the config skeleton — each library item declares its type; the logging method
+  comes free from the type):**
+  - Event + quantity + bucket: alcohol, sex, sauna, cold plunge, late/heavy meal, meditation.
+  - Load (daily dose + "last use" bucket): nicotine, caffeine. Timing signal = when the LAST one
+    was (near bedtime?), auto-derived from the last log time or one pick. No per-event tap.
+  - Category event: recreational drugs by class — stimulants / depressants-sedatives /
+    psychedelics / cannabis. Logged as used + class + when (+ optional intensity), not a count.
+  - Stack (bundle, one-tap, editable membership, time-bucketed): supplements + medications. User
+    builds named stacks (Morning/Evening/Meds); one tap logs all active items; dose lives in the
+    item definition (set once); toggle an item inactive when it runs out; expand to skip one tonight.
+  - Context flag: illness — Claude must know so it doesn't misread an HRV drop.
+- **v1 habit list:** alcohol, nicotine, caffeine, sex, meditation, sauna, cold plunge, late/heavy
+  meal, illness, medications+supplements (stacks), recreational drugs (by class).
+- **Mood + energy = subjective OUTPUTS, not habits** — a quick "how do you feel" check-in on the
+  output side, correlated against measured outputs; divergence (HRV says recovered but you feel
+  drained) is its own insight.
+- **Dropped:** stress (subjective + ambiguous — both driver and response), hydration (weak/noisy).
+- Sensitive data (drugs) must stay private — NEVER in community/sharing features; keep framing
+  clinically neutral for App Store review.
+
+**EATING — no logger; macros ride in via Apple Health (decided 2026-07-22).**
+- Suund does NOT build a food logger and does NOT integrate MFP's API (private, approval-gated,
+  paid — a third gatekeeper after Terra + Apple; avoid). Instead READ nutrition from Apple Health,
+  which MFP or any food app writes to.
+- The Health sync is lossy (no meal timestamps, no caffeine, one-directional) — but the losses
+  don't bite: timing + caffeine come from Habits; Health gives daily macro totals, exactly what's
+  needed.
+- Macros' job = "are you eating ENOUGH for your training load?" (under-eating vs load → poor
+  recovery), NOT calorie obsession. Needs a one-time profile (weight/height/age/goal) to compute
+  the target; load comes from workouts.
+- Only works if the user logs food elsewhere; else "—" (honest gap). A bonus layer for
+  food-trackers, not universal. Appears in Data (a vital) + Analysis (adequacy verdict). NOT a tab.
+
+**BLOODWORK — v2.** Infrequent, point-in-time, many markers = a slow measured OUTPUT, not a daily
+input. Input via photo/PDF of the lab report → Claude extracts markers (NOT manual entry of 40
+values; Apple Health labs unreliable in EE/EU). Lives as a section under Data (latest panel +
+trend), Analysis references it for depth. Periodic depth + trend across tests, NOT daily
+correlation (too sparse/slow). Needs "informational, not medical advice" framing (liability +
+Apple review). Not core to the daily loop — v2 if/when needed.
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
 
-**Guiding principle:** one screen answers one question — "what do I do here?"
-If there's more than one answer, split the screen. Every screen is a diary: easy to log
-input, easy to get an overview. WP's mistake wasn't too many features — it was every screen
-trying to do five things at once.
+**Guiding principle:** one screen answers one question — "what do I do here?" If there's more than
+one answer, split it. Self-evident, zero manual (see 2.3 north-star). WP's mistake: every screen
+doing five things at once.
 
-### Home (built)
-- Claude's morning analysis (hero) + metrics (sleep, HRV, RHR, steps, calories, workout)
-- Tappable chips open a conversation about that specific flag (NOT an empty chat box —
-  the summary itself generates the questions). (chat not built yet)
-- Sync is a button, not just morning. Suund must be a FASTER place to check HRV than
-  Apple Health itself. "Sync + show me now" must be instant. (not built yet)
+Tabs (revised 2026-07-22, detail in 2.3): **Data · Training · Habits · Analysis** + settings gear.
 
-### Training (designing)
+### Data (rebuild — was "Home")
+- Pure vitals, synced: HRV, RHR, sleep, steps, calories + macros (from Health).
+- Fastest place to see HRV — sync is a button, "sync + show me now" instant. No Claude summary here.
+- Bloodwork section lives here later (v2).
+
+### Analysis (LANDING page, designing next after Training)
+- The cached daily "why" + recommendation — the hero. Global verdict tying inputs → outputs
+  (measured + subjective), incl. training-load and eating-adequacy assessment.
+- Deep archives / correlation views live here too. Detail TBD.
+
+### Training (designing — NEXT)
 - Two separate jobs, different times, must NOT be on the same view at once:
   before/during workout ("what's on today" + log sets) vs other times ("how's my training going").
 - v1: show plan (from suund.app generator or import) · log today (exercise, set, rep, weight, RPE)
   · previous result shown next to each ("last: 90kg x 8") — heart of the diary, stolen from Strong.
-- Later: training-recovery correlation (needs data first).
 - Plan is a DATA STRUCTURE (Supabase), one schema, three surfaces: web generator, app, Excel
   import. Founder's 12-week Excel plan uses the same shape. Build schema once.
+- Later: training-recovery correlation (needs data first).
 - Open question: log speed (Strong-style tap-and-go) vs context (show previous, Claude hint)?
 
-### Habits (designing)
-- Config-driven (array), new habits added without new screens.
-- Tracks: alcohol, nicotine, mood, energy, sexual activity (+ more later).
-- Must capture QUANTITY (2 beers, not just "drank") and EVENT-AT-A-TIME (sex at 22:00) —
-  the gap NO existing habit tracker fills (Streaks etc. are binary). This is the niche.
-- Counters ("12 days no nicotine", "3 days sober") — visible, motivating, shareable.
-- Near-zero friction — steal EasyHabits' Home Screen / Lock Screen widget idea.
-  Open question: how many taps is acceptable to log a beer at a bar?
+### Habits (DESIGNED 2026-07-22 — full spec in 2.3)
+- Curated library, progressive precision, enter-once-default, two-tier tap, 4 time buckets, habit
+  types (event / load / category / stack / flag), v1 list. Mood/energy moved to output.
 
-### Trends (designing)
-- Charts over time (sleep/HRV/steps 7/30/90d) — visualization, build NOW with seed data.
-- Correlations ("alcohol -> HRV -18%") — a CONCLUSION, needs REAL noisy data, build LATER.
-  Mock data lies here (it only shows correlations that were coded in).
-
-### Profile (designing)
-- Connected devices, settings, language, subscription. Not designed in detail yet.
-
-### Bottom nav: Home · Trends · Training · Habits · Profile
+### Settings (gear icon, not a tab)
+- Connected devices, language, subscription, profile (weight/height/age/goal for eating target).
+  Not designed in detail.
 
 ---
 
@@ -182,16 +267,19 @@ Done: Etapp 0 (setup, both machines) · Etapp 1 (OW + MCP + Claude, real data) �
 Backend proxy (key server-side, rate limits) · Domain/email infrastructure (2026-07-21).
 
 NEXT:
-1. Product design conversations per screen (Training -> Habits -> Trends -> Profile).
-2. Structure: design system (theme/tokens.ts) + i18n — BEFORE building more screens.
-3. Habits + Training log — build EARLY: they generate the data Trends later analyzes.
+1. Product design per block: Habits ✓ (2026-07-22) → Training (in progress) → Analysis → Data.
+2. Structure: design system (theme/tokens.ts, locked dark palette) + i18n — BEFORE building more
+   screens. Build ON the design system from day one (don't style throwaway, then redo).
+3. Habits + Training log — build EARLY: they generate the data Analysis later needs.
    Each day without them = data lost forever. Must be best-in-class per layer.
-4. Trends charts (seed data, now) — correlations later (real data).
-5. Apple Health sync (founder's Apple Watch — only works on real device, not browser).
-   NOT blocked by the Apple account situation: Xcode free provisioning installs to your own
-   device (cert refreshes every 7 days), which is enough to test Health sync.
-6. TestFlight — waiting on Organization enrollment review (days to ~2 weeks). No longer
-   "blocked by a failed enrollment"; a viable path is in motion.
+4. Analysis (cached daily verdict) + per-block archives/heatmaps. Correlations later (real data).
+5. Apple Health sync — vitals + macros (founder's Apple Watch; only works on real device, not
+   browser). NOT blocked by the Apple account: Xcode free provisioning installs to your own
+   device (cert refreshes every 7 days), enough to test Health sync.
+6. TestFlight — waiting on Organization enrollment review (days to ~2 weeks). A viable path is
+   in motion.
+7. Visual polish pass ("visu") — micro-layout, animation, refinement AFTER functional build,
+   ON the design system (not a rebuild).
 
 APP STORE (not TestFlight) prerequisites, plan ahead:
 - User accounts (app currently reads OW's "first user" = founder's own).
@@ -205,10 +293,12 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
 
 ## 5. OPEN QUESTIONS
 
-- Habit logging: exact tap count / widget approach for zero-friction logging.
-- Training log: speed-first (Strong) vs context-first (show previous + Claude hint)?
-- User-added custom habits ("cold shower") — Claude needs to know what to do with a new
-  arbitrary metric. v2, harder than config-array habits.
+- RESOLVED (2026-07-22): habit logging = two-tier tap + 4 time buckets + enter-once defaults
+  (see 2.3). Custom free-text habits confirmed v2.
+- Training log: speed-first (Strong) vs context-first (show previous + Claude hint)? — STILL OPEN.
+- Analysis + Data screen detail — how the daily "why" is structured; vitals layout. Not designed.
+- Eating adequacy UX — how "eating enough vs training load" is shown; profile capture for the target.
+- Bloodwork v2 — photo/PDF → Claude parse → Data section. Deferred.
 - Community — NEXT PLANNING SESSION'S TOPIC. Involving people, comparing data between users,
   leaderboards, sharing counters/streaks. This is the moat, needs its own strategy discussion.
   Privacy model for shared data (Apple is strict). Public vs private.
@@ -239,6 +329,14 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   Email set up: dev@suund.app live, IMAP on Mac + phone, SPF/DKIM pass, DMARC p=none, account
   2FA on. Hosting decided: Cloudflare Pages via Lovable→GitHub, DNS stays at Namecheap.
   Vercel and Lovable-hosting rejected on cost/terms.
+- **2026-07-22** — v1 product design session (planning). Locked the input/output backbone +
+  daily loop; 4 tabs (Data · Training · Habits · Analysis, settings = gear icon); landing =
+  Analysis (cached daily verdict). Full Habits design: curated library, progressive precision,
+  enter-once defaults, two-tier tap, 4 time buckets, habit types (event/load/category/stack/
+  flag), v1 list; mood/energy reclassified as OUTPUTS; stress + hydration dropped. Eating =
+  no logger, macros read via Apple Health (MFP-populated), job = adequacy vs training load.
+  Bloodwork deferred to v2 (photo/PDF → Claude parse). Full spec in §2.3. Apple: founder to do
+  Organization enrollment at home with Jost (checklist prepared). NEXT: Training block design.
 
 ---
 
