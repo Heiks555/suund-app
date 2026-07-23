@@ -256,8 +256,26 @@ Apple review). Not core to the daily loop — v2 if/when needed.
   CROSS-DEVICE (Apple Watch, Garmin, Oura, MFP) — a giant doing the agnostic play, near-free.
 - Apple: Project Mulberry / "Apple Coach" SHELVED Feb 2026 (leadership shakeup); features
   dribble out through 2026. → Apple Watch users currently have NO strong native coach — a window.
-- Closest software rivals: Welltory (HRV + alcohol + AI, but science-heavy/complex), Bearable
-  (rich logging, NO AI — just charts), Wellness Project (uses Claude).
+- **MOST DIRECT competitor: Bevel ("AI Health Coach")** — feature/positioning near-identical to
+  Suund: makes Apple Watch / Apple Health useful (no new band), OWN recovery score (in-app, ~14-day
+  calibration), HRV/RHR/respiratory/VO2max, habit tracking, conversational AI ("why was my recovery
+  low today?"). It is essentially Suund, already shipped — and there's a whole category ("Bevel
+  alternatives"). → The "WHOOP-for-Apple-Watch" gap is OCCUPIED, not white space.
+  DECISION (2026-07-22): build v1 anyway — ship to learn, consistent with the speed/first-users
+  thesis. But the WEDGE vs Bevel (Claude reasoning quality? honesty/not-a-cheerleader? endurance/
+  lactate depth? radical simplicity?) is the make-or-break OPEN question — answer it by USING Bevel +
+  real users, not deliberation. Bevel occupying the breadth position strengthens the case for the
+  niche/endurance wedge the founder earlier resisted.
+- Other software rivals: Welltory (HRV + alcohol + AI, science-heavy), Bearable (rich logging, NO AI —
+  just charts), Wellness Project (uses Claude).
+- WEDGE vs Bevel (hands-on, 2026-07-22): Bevel is €12/mo AND cluttered (too many widgets). Suund's wedge
+  = cheaper (~€4–5/mo) + radically SIMPLER. Key nuance: simplicity is a WEAK edge vs Apple (also simple)
+  but a REAL edge vs Bevel (cluttered) — and durable via incumbent inertia (they can't easily un-clutter;
+  their users expect the widgets; matches the "copier adds, simplicity leaves out" thesis). Price =
+  acquisition lever, NOT a moat (Bevel can match; ~3× users for same revenue). Execution caveat: "simple"
+  must read PREMIUM-CLEAN (does the core job better), not budget/thin — the design quality of the
+  simplicity is what justifies the price. (Backfill-from-Apple-Health-history is NOT an advantage — Bevel
+  and all others have it too.)
 
 **Consequence — you cannot win on features / AI / aggregation** (giants + Welltory own it).
 Confirms the thesis: tech is not the moat. Hard corollary found this session: **"simplicity" does
@@ -479,7 +497,11 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   Analysis block designed (landing): read-only daily verdict (cached post-sync); three non-repeating
   layers = verdict (causal story) · chips (discrete factors+numbers, tappable) · chip detail (static
   mechanism). Chip model = fixed vocabulary + dynamic selection, cap 3–5, honest cold-start. Mockup
-  built + reviewed. Only onboarding left before build.
+  built + reviewed. Mockups built + reviewed for all 4 tabs (Data, Habits, Training, Analysis).
+  Competitor deep-dive: Bevel = most direct (feature/positioning-identical, €12/mo, cluttered) + Sonar AI.
+  Wedge decided = cheaper (~€4–5) + radically simpler; ship v1 regardless, find/validate the wedge with
+  real users. Onboarding: lean flow proposed (1 mandatory HealthKit permission → instant value from
+  Apple Health history → habits/profile deferred) but NOT finalized — resume here next.
 
 ---
 
