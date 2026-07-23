@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suund — v1 screen mockups (rev 3)</title>
+<style>
+  :root{
+    --bg:#08090b; --panel:#0c0d10; --panel-2:#111318; --panel-3:#0f1116;
+    --line:#1b1e25; --line-2:#252932;
+    --text:#f4f6fa; --muted:#8b93a3; --faint:#5b6270;
+    --corn:#6495ED; --corn-dim:rgba(100,149,237,.14); --corn-soft:rgba(100,149,237,.32);
+    --violet:#8f7ff0; --good:#5ec98a; --warn:#e8b26b; --hot:#e0665f;
+  }
+  *{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+  .page{max-width:1760px;margin:0 auto;padding:40px 28px 90px}
+  .head h1{font-size:22px;font-weight:650;letter-spacing:-.02em;margin:0 0 6px}
+  .head .cf{color:var(--corn)}
+  .head p{color:var(--muted);font-size:13.5px;margin:0;max-width:820px;line-height:1.55}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:16px 0 34px;color:var(--faint);font-size:12px}
+  .legend b{color:var(--muted);font-weight:600}
+  .grid{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .col{width:326px}
+  .caption{color:var(--muted);font-size:12.5px;margin:0 4px 12px;display:flex;gap:8px;align-items:baseline}
+  .caption .n{color:var(--corn);font-weight:700}
+  .caption .t{color:var(--text);font-weight:600}
+
+  .phone{background:var(--panel);border:1px solid var(--line);border-radius:40px;
+    padding:14px 14px 14px;display:flex;flex-direction:column;
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.9)}
+  .statusbar{display:flex;justify-content:space-between;align-items:center;
+    padding:4px 12px 12px;font-size:12px;color:var(--muted);font-weight:600}
+  .screen{padding:0 4px}
+  .tabtitle{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:2px 6px 2px}
+  .sub{color:var(--faint);font-size:12px;margin:0 6px 14px}
+
+  .nav{margin-top:14px;border-top:1px solid var(--line);padding-top:13px;
+    display:flex;justify-content:space-around}
+  .nav a{display:flex;flex-direction:column;align-items:center;gap:5px;
+    color:var(--faint);font-size:10.5px;font-weight:600;text-decoration:none;width:60px}
+  .nav a .dot{width:20px;height:20px;border-radius:7px;border:1.8px solid currentColor;opacity:.85}
+  .nav a.active{color:var(--corn)}
+  .nav a.active .dot{background:var(--corn-dim);border-color:var(--corn)}
+
+  .card{background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .card + .card{margin-top:10px}
+  .row{display:flex;justify-content:space-between;align-items:center}
+  .k{color:var(--muted);font-size:13px}
+  .v{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px}
+  .dash{color:var(--faint)}
+  .muted{color:var(--muted)} .up{color:var(--good)} .down{color:var(--warn)}
+  hr.sep{border:0;border-top:1px solid var(--line);margin:11px 0}
+  .grouptitle{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);
+    font-weight:700;margin:16px 6px 8px;display:flex;justify-content:space-between;align-items:center}
+  .grouptitle .see{color:var(--corn);font-weight:600;text-transform:none;letter-spacing:0;font-size:11px}
+  .foot{color:var(--faint);font-size:11px;margin:8px 8px 2px;line-height:1.5}
+
+  .seg{display:flex;gap:4px;background:var(--panel-3);border:1px solid var(--line);border-radius:11px;
+    padding:3px;margin:0 4px 12px}
+  .seg span{flex:1;text-align:center;font-size:11.5px;font-weight:600;color:var(--faint);padding:6px 0;border-radius:8px}
+  .seg span.on{background:var(--corn-dim);color:var(--corn)}
+
+  /* chart card */
+  .cc{background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:13px 14px 10px;margin:0 4px}
+  .cc + .cc{margin-top:10px}
+  .cc .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .cc .lab{font-size:12px;color:var(--muted);font-weight:600}
+  .cc .val{font-size:20px;font-weight:720;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:1px}
+  .cc .val small{font-size:11px;color:var(--faint);font-weight:600;margin-left:2px}
+  .cc .delta{font-size:11.5px;font-weight:700;text-align:right}
+  .cc .ctx{font-size:10.5px;color:var(--faint);font-weight:600;text-align:right;margin-top:2px}
+  .cc svg{display:block;width:100%;margin-top:8px;overflow:visible}
+  .cc .xlab{display:flex;justify-content:space-between;font-size:9.5px;color:var(--faint);margin-top:3px;padding:0 1px}
+
+  .scores{display:flex;gap:9px;margin:0 4px 12px}
+  .score{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center}
+  .score .num{font-size:26px;font-weight:720;letter-spacing:-.03em;line-height:1}
+  .score .lab{font-size:11px;color:var(--muted);margin-top:6px;font-weight:600}
+  .score .base{font-size:9.5px;margin-top:3px}
+  .score.cal .num{color:var(--faint);font-size:19px}
+  .sync{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-2);
+    border-radius:12px;padding:9px;margin:0 4px 12px;font-size:12.5px;color:var(--muted);font-weight:600}
+
+  /* trend detail */
+  .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 4px}
+  .q{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .q .qt{font-size:11px;color:var(--muted);font-weight:600}
+  .q .qv{font-size:19px;font-weight:720;letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums}
+  .q .qv small{font-size:11px;color:var(--faint);font-weight:600}
+  .q .qd{font-size:11px;font-weight:700;margin-top:2px}
+  .hl{display:flex;gap:9px;margin:0 4px}
+  .hl .h{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:11px 10px;text-align:center}
+  .hl .h .t{font-size:10px;color:var(--faint);font-weight:600}
+  .hl .h .n{font-size:16px;font-weight:720;margin-top:4px;font-variant-numeric:tabular-nums}
+  .lockcard{margin:0 4px;background:var(--panel-3);border:1px dashed var(--line-2);border-radius:14px;
+    padding:12px;display:flex;align-items:center;gap:10px;color:var(--faint);font-size:12px}
+
+  /* zone + heat */
+  .zone{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:2px 0 9px;border:1px solid var(--line)}
+  .zone i{display:block;height:100%}
+  .zlegend{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;color:var(--muted)}
+  .zlegend b{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+  .heat{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;margin-top:4px}
+  .heat i{aspect-ratio:1;border-radius:3px;background:#161a21}
+  .heat i.l1{background:rgba(100,149,237,.30)} .heat i.l2{background:rgba(100,149,237,.60)} .heat i.l3{background:var(--corn)}
+  .heatkey{display:flex;align-items:center;gap:6px;justify-content:flex-end;font-size:10px;color:var(--faint);margin-top:8px}
+  .heatkey i{width:11px;height:11px;border-radius:3px;display:block}
+
+  .wo{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:13px;margin-top:8px}
+  .wo .nm{font-size:13.5px;font-weight:600} .wo .mt{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .wo .kc{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;line-height:1.5}
+  .tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px}
+  .tag.hard{color:var(--warn);background:rgba(232,178,107,.14)}
+  .tag.easy{color:var(--good);background:rgba(94,201,138,.14)}
+  .readonly{font-size:11px;color:var(--faint);margin:12px 8px 0;text-align:center;line-height:1.5}
+
+  /* analysis */
+  .verdict{font-size:16.5px;line-height:1.5;font-weight:520;letter-spacing:-.01em;margin:4px 6px 14px}
+  .verdict .k1{color:var(--corn);font-weight:680}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 4px 14px}
+  .chip{border:1px solid var(--line-2);background:var(--panel-3);border-radius:999px;padding:7px 11px;font-size:12px;color:var(--text);display:flex;gap:6px;align-items:center}
+  .chip.on{border-color:var(--corn);color:var(--corn);background:var(--corn-dim)}
+  .chip .g{color:var(--good)} .chip .w{color:var(--warn)}
+  .detail{background:var(--panel-2);border:1px solid var(--line);border-left:2px solid var(--corn);border-radius:12px;padding:12px 13px;margin:0 4px 12px}
+  .detail .h{font-size:12.5px;color:var(--muted);margin:0 0 5px;font-weight:600}
+  .detail p{margin:0;font-size:13px;line-height:1.5}
+  .rec{margin:0 4px 4px;padding:13px;border-radius:14px;background:var(--corn-dim);border:1px solid var(--corn-soft)}
+  .rec .h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--corn);font-weight:700;margin:0 0 5px}
+  .rec p{margin:0;font-size:13.5px;line-height:1.45}
+
+  /* habits */
+  .counters{display:flex;gap:9px;margin:0 4px 12px}
+  .counter{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:11px}
+  .counter .n{font-size:20px;font-weight:720;letter-spacing:-.02em}
+  .counter .l{font-size:11px;color:var(--muted);margin-top:2px}
+  .buckets{display:flex;gap:6px;margin:0 4px 12px}
+  .bk{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--faint);padding:6px 0;border-radius:9px;border:1px solid transparent}
+  .bk.on{color:var(--corn);border-color:var(--corn);background:var(--corn-dim)}
+  .htiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 4px}
+  .tile{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:11px 12px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+  .tile.on{border-color:var(--corn);background:var(--corn-dim)}
+  .tile .amt{font-size:11px;color:var(--muted);font-weight:600} .tile.on .amt{color:var(--corn)}
+  .tile.flag{border-style:dashed}
+  .mood{display:flex;gap:8px;margin:10px 4px 0}
+  .mood .m{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:11px}
+  .mood .l{font-size:11px;color:var(--muted)}
+  .dots{display:flex;gap:5px;margin-top:8px}
+  .dots i{width:15px;height:15px;border-radius:50%;border:1.6px solid var(--line-2);display:block}
+  .dots i.f{background:var(--corn);border-color:var(--corn)}
+  .copy{margin:10px 4px 0;border:1px solid var(--line-2);border-radius:12px;padding:11px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:600}
+  .copy small{display:block;color:var(--faint);font-weight:500;font-size:10.5px;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <h1>Suund — <span class="cf">v1</span> screen mockups <span style="font-size:13px;color:var(--faint);font-weight:500">· rev 3 · full-height, detailed</span></h1>
+    <p>Data carries 5 charts (HRV · VO₂max · total sleep · training load · total kcal), each tappable → a Trend screen (Today/Week/Month/Year + records, borrowed from Bevel). Training is a real read-only summary. Also stolen, kept simple: consistency heatmap, "copy from yesterday", tri-state toggles. Palette near-black, cornflower <span class="cf">#6495ED</span> only where it means something, "—" for every real gap.</p>
+  </div>
+  <div class="legend">
+    <span><b>Data</b> = 5 charts + trend tap-through</span>
+    <span><b>—</b> = honest gap</span>
+    <span><b>Wedge held:</b> one clear thing per card, no widget soup</span>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1 ANALYSIS -->
+    <div class="col">
+      <div class="caption"><span class="n">1</span><span class="t">Analysis</span><span>· landing</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>Suund</span><span>●●●</span></div>
+        <div class="screen">
+          <div class="tabtitle">Today</div>
+          <div class="sub">Thu 23 Jul · updated after morning sync</div>
+          <div class="verdict">You're <span class="k1">recovered</span> and ready. Three alcohol-free days are showing — your nervous system settled overnight and sleep did the repair work. The one drag: late caffeine clipped your deep sleep.</div>
+          <div class="chips">
+            <span class="chip on"><span class="g">✓</span> 3 days alcohol-free</span>
+            <span class="chip">HRV <span class="g">+8%</span></span>
+            <span class="chip">Late caffeine</span>
+            <span class="chip">Deep sleep <span class="w">−40m</span></span>
+            <span class="chip">Load moderate</span>
+          </div>
+          <div class="detail">
+            <p class="h">Late caffeine · tap detail</p>
+            <p>Coffee at 21:40. On 12 similar nights your deep sleep ran ~22% lower. A pattern, not a verdict.</p>
+          </div>
+          <div class="rec">
+            <p class="h">Do this</p>
+            <p>Keep the streak. Move coffee before 2pm — tonight's deep sleep should come back.</p>
+          </div>
+          <p class="foot">Still learning your patterns — 18 days in. Chips show only what crossed a threshold today.</p>
+        </div>
+        <div class="nav">
+          <a><span class="dot"></span>Data</a><a><span class="dot"></span>Training</a>
+          <a><span class="dot"></span>Habits</a><a class="active"><span class="dot"></span>Analysis</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 DATA -->
+    <div class="col">
+      <div class="caption"><span class="n">2</span><span class="t">Data</span><span>· 5 charts · full content</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>Suund</span><span>●●●</span></div>
+        <div class="screen">
+          <div class="tabtitle">Data</div>
+          <div class="sub">The whole picture, with your trends</div>
+          <div class="sync">⟳ Synced 2 min ago · tap to refresh</div>
+
+          <div class="scores">
+            <div class="score"><div class="num">82</div><div class="lab">Recovery</div><div class="base up">▲ vs base</div></div>
+            <div class="score"><div class="num">74</div><div class="lab">Sleep</div><div class="base muted">– vs base</div></div>
+            <div class="score cal"><div class="num">60</div><div class="lab">Load</div><div class="base" style="color:var(--faint)">calibrating·6d</div></div>
+          </div>
+          <div class="seg"><span>7D</span><span class="on">30D</span><span>90D</span></div>
+
+          <!-- HRV -->
+          <div class="cc">
+            <div class="top"><div><div class="lab">HRV · nighttime</div><div class="val">68<small>ms</small></div></div>
+              <div><div class="delta up">▲ 8%</div><div class="ctx">base 63 ms</div></div></div>
+            <svg viewBox="0 0 298 74" preserveAspectRatio="none" height="74">
+              <defs><linearGradient id="gh" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6495ED" stop-opacity=".26"/><stop offset="1" stop-color="#6495ED" stop-opacity="0"/></linearGradient></defs>
+              <line x1="0" y1="48" x2="298" y2="48" stroke="#2a2f3a" stroke-width="1" stroke-dasharray="3 4"/>
+              <path d="M0,58 L20,54 40,60 60,50 80,53 100,46 120,50 140,40 160,44 180,36 200,40 220,32 240,35 260,28 280,32 298,22 L298,74 L0,74 Z" fill="url(#gh)"/>
+              <polyline points="0,58 20,54 40,60 60,50 80,53 100,46 120,50 140,40 160,44 180,36 200,40 220,32 240,35 260,28 280,32 298,22" fill="none" stroke="#6495ED" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="298" cy="22" r="3.2" fill="#6495ED"/></svg>
+            <div class="xlab"><span>24 Jun</span><span>9 Jul</span><span>Today</span></div>
+          </div>
+
+          <!-- VO2max -->
+          <div class="cc">
+            <div class="top"><div><div class="lab">VO₂max</div><div class="val">52<small>ml/kg</small></div></div>
+              <div><div class="delta up">▲ 1.2</div><div class="ctx">good · rising</div></div></div>
+            <svg viewBox="0 0 298 56" preserveAspectRatio="none" height="56">
+              <polyline points="0,44 40,42 80,43 120,38 160,37 200,32 240,30 298,24" fill="none" stroke="#6495ED" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="298" cy="24" r="3" fill="#6495ED"/></svg>
+            <div class="xlab"><span>3 mo ago</span><span></span><span>Today</span></div>
+          </div>
+
+          <!-- Sleep total -->
+          <div class="cc">
+            <div class="top"><div><div class="lab">Sleep · total per night</div><div class="val">7h 12m<small>avg</small></div></div>
+              <div><div class="delta muted">– 0%</div><div class="ctx">goal 7h30</div></div></div>
+            <svg viewBox="0 0 298 56" height="56"><g fill="#6495ED">
+              <rect x="4" y="20" width="30" height="36" rx="3" opacity=".55"/><rect x="42" y="12" width="30" height="44" rx="3" opacity=".75"/><rect x="80" y="26" width="30" height="30" rx="3" opacity=".45"/><rect x="118" y="14" width="30" height="42" rx="3" opacity=".75"/><rect x="156" y="22" width="30" height="34" rx="3" opacity=".6"/><rect x="194" y="8" width="30" height="48" rx="3"/><rect x="232" y="16" width="30" height="40" rx="3" opacity=".75"/><rect x="270" y="18" width="24" height="38" rx="3" opacity=".7"/></g></svg>
+            <div class="xlab"><span>Mon</span><span>Thu</span><span>Sun</span></div>
+          </div>
+
+          <!-- Training load -->
+          <div class="cc">
+            <div class="top"><div><div class="lab">Training load · daily</div><div class="val">Moderate</div></div>
+              <div><div class="delta muted">in band</div><div class="ctx">7-day</div></div></div>
+            <svg viewBox="0 0 298 56" height="56"><g fill="#8f7ff0">
+              <rect x="4" y="30" width="30" height="26" rx="3" opacity=".5"/><rect x="42" y="16" width="30" height="40" rx="3" opacity=".75"/><rect x="80" y="40" width="30" height="16" rx="3" opacity=".4"/><rect x="118" y="6" width="30" height="50" rx="3"/><rect x="156" y="26" width="30" height="30" rx="3" opacity=".6"/><rect x="194" y="36" width="30" height="20" rx="3" opacity=".45"/><rect x="232" y="44" width="30" height="12" rx="3" opacity=".4"/><rect x="270" y="34" width="24" height="22" rx="3" opacity=".5"/></g></svg>
+            <div class="xlab"><span>Mon</span><span>Thu</span><span>Sun</span></div>
+          </div>
+
+          <!-- Nutrition total kcal -->
+          <div class="cc">
+            <div class="top"><div><div class="lab">Energy in · total kcal</div><div class="val">1 980<small>kcal</small></div></div>
+              <div><div class="delta down">▼ vs burn</div><div class="ctx">burn 2 490</div></div></div>
+            <svg viewBox="0 0 298 56" preserveAspectRatio="none" height="56">
+              <defs><linearGradient id="gn" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e8b26b" stop-opacity=".22"/><stop offset="1" stop-color="#e8b26b" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,30 L40,26 80,34 120,22 160,40 200,28 240,44 298,32 L298,56 L0,56 Z" fill="url(#gn)"/>
+              <polyline points="0,30 40,26 80,34 120,22 160,40 200,28 240,44 298,32" fill="none" stroke="#e8b26b" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="298" cy="32" r="3" fill="#e8b26b"/></svg>
+            <div class="xlab"><span>Mon</span><span>Thu</span><span>Sun · P142 C190 F61</span></div>
+          </div>
+
+          <div class="grouptitle">More vitals</div>
+          <div class="card">
+            <div class="row"><span class="k">Resting HR</span><span class="v">48 bpm <span class="up">▲</span></span></div><hr class="sep">
+            <div class="row"><span class="k">Respiratory</span><span class="v">14.2 br/min</span></div><hr class="sep">
+            <div class="row"><span class="k">SpO₂</span><span class="v dash">—</span></div><hr class="sep">
+            <div class="row"><span class="k">Steps</span><span class="v">8 420</span></div><hr class="sep">
+            <div class="row"><span class="k">Skin temp · deviation</span><span class="v">−0.2 °C</span></div><hr class="sep">
+            <div class="row"><span class="k">Lactate · Bloodwork</span><span class="v dash">— · —</span></div>
+          </div>
+          <p class="foot">Scores &amp; charts are yours — computed the same way across every device. No Claude here; the "why" lives in Analysis.</p>
+        </div>
+        <div class="nav">
+          <a class="active"><span class="dot"></span>Data</a><a><span class="dot"></span>Training</a>
+          <a><span class="dot"></span>Habits</a><a><span class="dot"></span>Analysis</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 TREND DETAIL -->
+    <div class="col">
+      <div class="caption"><span class="n">3</span><span class="t">Trend</span><span>· tap-through from any metric</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>Suund</span><span>●●●</span></div>
+        <div class="screen">
+          <div class="tabtitle">‹ HRV</div>
+          <div class="sub">Nighttime RMSSD · your history</div>
+
+          <div class="cc" style="margin:0 4px 12px">
+            <div class="top"><div><div class="val" style="font-size:26px">68<small>ms</small></div><div class="lab">today · base 63</div></div>
+              <div><div class="delta up">▲ 8%</div><div class="ctx">vs 30-day</div></div></div>
+            <svg viewBox="0 0 298 108" preserveAspectRatio="none" height="108">
+              <defs><linearGradient id="gt" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6495ED" stop-opacity=".26"/><stop offset="1" stop-color="#6495ED" stop-opacity="0"/></linearGradient></defs>
+              <line x1="0" y1="66" x2="298" y2="66" stroke="#2a2f3a" stroke-width="1" stroke-dasharray="3 4"/>
+              <path d="M0,80 L18,74 36,84 54,70 72,76 90,64 108,72 126,58 144,64 162,52 180,60 198,46 216,54 234,42 252,50 270,36 288,44 298,30 L298,108 L0,108 Z" fill="url(#gt)"/>
+              <polyline points="0,80 18,74 36,84 54,70 72,76 90,64 108,72 126,58 144,64 162,52 180,60 198,46 216,54 234,42 252,50 270,36 288,44 298,30" fill="none" stroke="#6495ED" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="298" cy="30" r="3.4" fill="#6495ED"/></svg>
+            <div class="xlab"><span>90 days ago</span><span></span><span>Today</span></div>
+          </div>
+
+          <div class="grouptitle">Averages</div>
+          <div class="qgrid">
+            <div class="q"><div class="qt">Today</div><div class="qv">68<small> ms</small></div><div class="qd up">▲ 8%</div></div>
+            <div class="q"><div class="qt">Week avg</div><div class="qv">64<small> ms</small></div><div class="qd up">▲ 5%</div></div>
+            <div class="q"><div class="qt">Month avg</div><div class="qv">63<small> ms</small></div><div class="qd muted">– 0%</div></div>
+            <div class="q"><div class="qt">Year avg</div><div class="qv">59<small> ms</small></div><div class="qd up">▲ 12%</div></div>
+          </div>
+
+          <div class="grouptitle">Highlights</div>
+          <div class="hl">
+            <div class="h"><div class="t">All-time avg</div><div class="n">59 ms</div></div>
+            <div class="h"><div class="t">Record high</div><div class="n" style="color:var(--good)">88 ms</div></div>
+            <div class="h"><div class="t">Record low</div><div class="n" style="color:var(--warn)">41 ms</div></div>
+          </div>
+
+          <div class="grouptitle">Later</div>
+          <div class="lockcard"><span>🔒</span><span>Community: how you compare to similar users (age/sex). Ships with the community layer — privacy-gated.</span></div>
+          <p class="foot">Same trend screen for every metric — one tap from Data.</p>
+        </div>
+        <div class="nav">
+          <a class="active"><span class="dot"></span>Data</a><a><span class="dot"></span>Training</a>
+          <a><span class="dot"></span>Habits</a><a><span class="dot"></span>Analysis</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 HABITS -->
+    <div class="col">
+      <div class="caption"><span class="n">4</span><span class="t">Habits</span><span>· tap / hold · copy yesterday</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>Suund</span><span>●●●</span></div>
+        <div class="screen">
+          <div class="tabtitle">Habits</div>
+          <div class="sub">Tap = it happened · hold = amount or time</div>
+          <div class="counters">
+            <div class="counter"><div class="n">3d</div><div class="l">Alcohol-free</div></div>
+            <div class="counter"><div class="n">12d</div><div class="l">Nicotine-free</div></div>
+          </div>
+          <div class="buckets"><span class="bk">Morning</span><span class="bk">Noon</span><span class="bk on">Evening</span><span class="bk">Late</span></div>
+          <div class="htiles">
+            <div class="tile on"><span>Caffeine</span><span class="amt">2 · logged</span></div>
+            <div class="tile"><span>Alcohol</span><span class="amt">tap</span></div>
+            <div class="tile on"><span>Meditation</span><span class="amt">10 min</span></div>
+            <div class="tile"><span>Sauna</span><span class="amt">tap</span></div>
+            <div class="tile"><span>Cold plunge</span><span class="amt">tap</span></div>
+            <div class="tile"><span>Sex</span><span class="amt">tap</span></div>
+            <div class="tile"><span>Evening stack</span><span class="amt">3 · one tap</span></div>
+            <div class="tile flag"><span>Illness</span><span class="amt">flag</span></div>
+          </div>
+          <div class="mood">
+            <div class="m"><div class="l">Mood</div><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div></div>
+            <div class="m"><div class="l">Energy</div><div class="dots"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div></div>
+          </div>
+          <div class="copy">⟲ Copy yesterday's entries<small>only your recurring toggles — quantities stay blank</small></div>
+          <p class="foot">Mood &amp; energy are outputs — logged here, read in Analysis. Drugs (by class) stay private, never shared.</p>
+        </div>
+        <div class="nav">
+          <a><span class="dot"></span>Data</a><a><span class="dot"></span>Training</a>
+          <a class="active"><span class="dot"></span>Habits</a><a><span class="dot"></span>Analysis</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 TRAINING -->
+    <div class="col">
+      <div class="caption"><span class="n">5</span><span class="t">Training</span><span>· read-only summary</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>Suund</span><span>●●●</span></div>
+        <div class="screen">
+          <div class="tabtitle">Training</div>
+          <div class="sub">Load from your watch · feeds Analysis</div>
+          <div class="seg"><span>7D</span><span class="on">30D</span><span>90D</span></div>
+
+          <div class="cc">
+            <div class="top"><div><div class="lab">Active time · last 30 days</div><div class="val">6h 31m</div></div>
+              <div><div class="delta up">▲ 42m</div><div class="ctx">vs prev 30</div></div></div>
+            <svg viewBox="0 0 298 84" preserveAspectRatio="none" height="84">
+              <defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6495ED" stop-opacity=".24"/><stop offset="1" stop-color="#6495ED" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,76 L30,74 40,62 60,60 90,58 110,42 150,40 175,38 190,26 230,24 250,16 298,14 L298,84 L0,84 Z" fill="url(#ga)"/>
+              <polyline points="0,76 30,74 40,62 60,60 90,58 110,42 150,40 175,38 190,26 230,24 250,16 298,14" fill="none" stroke="#6495ED" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="298" cy="14" r="3.2" fill="#6495ED"/></svg>
+            <div class="xlab"><span>23 Jun</span><span>8 Jul</span><span>23 Jul</span></div>
+          </div>
+
+          <div class="cc">
+            <div class="top"><div><div class="lab">Cardio load</div><div class="val">Building</div></div>
+              <div><div class="delta" style="color:var(--faint)">calibrating</div><div class="ctx">6 days</div></div></div>
+            <svg viewBox="0 0 298 60" preserveAspectRatio="none" height="60">
+              <rect x="0" y="22" width="298" height="18" fill="#6495ED" opacity=".10"/>
+              <polyline points="0,48 30,18 60,44 90,38 120,28 150,48 180,22 210,42 240,32 270,40 298,36" fill="none" stroke="#8f7ff0" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="298" cy="36" r="3" fill="#8f7ff0"/></svg>
+            <div class="xlab"><span>optimal band shaded</span><span></span><span>now</span></div>
+          </div>
+
+          <div class="grouptitle">Intensity mix · 30d</div>
+          <div class="card">
+            <div class="zone"><i style="width:64%;background:#5ec98a"></i><i style="width:22%;background:#6495ED"></i><i style="width:9%;background:#e8b26b"></i><i style="width:5%;background:#e0665f"></i></div>
+            <div class="zlegend"><span><b style="background:#5ec98a"></b>Low aerobic 64%</span><span><b style="background:#6495ED"></b>Aerobic 22%</span><span><b style="background:#e8b26b"></b>Threshold 9%</span><span><b style="background:#e0665f"></b>VO₂ 5%</span></div>
+          </div>
+
+          <div class="grouptitle"><span>Consistency · 30d</span><span class="see" style="color:var(--faint)">14 sessions</span></div>
+          <div class="card" style="padding:12px">
+            <div class="heat">
+              <i></i><i class="l1"></i><i></i><i class="l2"></i><i></i><i></i><i class="l1"></i><i class="l1"></i><i></i><i class="l3"></i><i></i><i class="l1"></i><i></i><i></i><i class="l2"></i>
+              <i></i><i class="l1"></i><i></i><i></i><i class="l2"></i><i></i><i class="l1"></i><i></i><i class="l3"></i><i></i><i class="l1"></i><i></i><i class="l2"></i><i></i><i class="l1"></i>
+            </div>
+            <div class="heatkey"><span>less</span><i style="background:#161a21"></i><i class="l1" style="background:rgba(100,149,237,.30)"></i><i class="l2" style="background:rgba(100,149,237,.60)"></i><i class="l3" style="background:#6495ED"></i><span>more</span></div>
+          </div>
+
+          <div class="grouptitle"><span>HRR · post-workout</span><span class="see" style="color:var(--faint)">fitness signal</span></div>
+          <div class="card">
+            <div class="row"><span class="k">1-min recovery</span><span class="v">32 bpm <span class="up">▲</span></span></div>
+          </div>
+
+          <div class="grouptitle">Recent</div>
+          <div class="wo"><div><div class="nm">Threshold run</div><div class="mt">Today · 48m · avg HR 158</div></div><div class="kc">512 kcal<br><span class="tag hard">hard</span></div></div>
+          <div class="wo"><div><div class="nm">Easy spin</div><div class="mt">Tue · 1h 02m · avg HR 121</div></div><div class="kc">320 kcal<br><span class="tag easy">easy</span></div></div>
+          <div class="wo"><div><div class="nm">Strength</div><div class="mt">Mon · 42m · avg HR 108</div></div><div class="kc">210 kcal<br><span class="tag easy">easy</span></div></div>
+
+          <p class="readonly">Read from Apple Health. No logging, no plans —<br>Strong &amp; Hevy do that; Suund reasons on top.</p>
+        </div>
+        <div class="nav">
+          <a><span class="dot"></span>Data</a><a class="active"><span class="dot"></span>Training</a>
+          <a><span class="dot"></span>Habits</a><a><span class="dot"></span>Analysis</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

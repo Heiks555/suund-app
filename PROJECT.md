@@ -315,6 +315,55 @@ community session, NOT solved. Good enough to build & launch v1 on; not the perm
 - Watch: OW itself now ships an AI reasoning engine + MCP + health scores + coaching profiles —
   our own data layer is climbing the stack. Not a threat (it's our infra), but track it.
 
+### 2.5 DATA + TRAINING SCREEN DETAIL + WEARABLE HANDLING (decided 2026-07-23)
+
+**Data screen — charts locked.** Depth = "sparkline everywhere + tap-through trend", NOT Bevel's
+widget wall (the simplicity wedge holds). Main screen: 3 scores → 5 chart cards, each with value +
+delta + baseline context + a mini chart:
+  1. HRV (nighttime RMSSD) — line + dashed baseline
+  2. VO₂max — line
+  3. Sleep — total duration per night (bars)
+  4. Training load — daily (bars)
+  5. Energy in — total kcal (line, shown vs burn)
+Below: compact "more vitals" list (RHR, respiratory, SpO₂, steps, skin-temp deviation, lactate/
+bloodwork markers) with "—" for gaps.
+- **Trend screen (tap any metric):** big 90-day chart + Today/Week/Month/Year averages + Highlights
+  (all-time avg, record high, record low). ONE reusable screen for every metric (borrowed from
+  Bevel "Your Trends"). Community comparison ("similar users, age/sex") sits here as a LOCKED row →
+  ships with the community layer, privacy-gated.
+- No Claude on Data (local math, instant); the "why" stays in Analysis.
+
+**Training screen — real read-only summary (was too thin).** Still NO logger/plan. All from Health:
+Active-time cumulative (30d) · Cardio load + optimal band ("calibrating" until enough data) ·
+Intensity/zone mix bar · Consistency heatmap (30d) · HRR (1-min recovery = fitness signal) ·
+Recent workouts with an easy/hard intensity tag.
+
+**Borrowed from Bevel, kept simple:** per-metric sparklines; the trend screen; consistency heatmap;
+"copy yesterday's entries" (Habits friction-cut); tri-state toggle (✓/–/✗ = honest "unknown").
+**Rejected as clutter/off-thesis:** Biological Age gauge (gimmick + Pro-lock), strength-volume
+radar, workout templates / Strength Builder (we don't log workouts), CGM / blood-glucose.
+
+**WEARABLE HETEROGENEITY — how different devices are shown (Oura richer than Garmin, etc.):**
+- **Metric-first, not device-first.** Screens are fixed metric slots; whatever device supplies a
+  metric fills it. Device swap never changes the screen shape (simplicity).
+- **Open Wearables normalizes** to one common schema — the app sees "HRV = X", not "Oura HRV" vs
+  "Garmin HRV". Brand differences reconciled in that layer.
+- **Suund's OWN 0–100 scores** are computed the same way across every source → solves cross-device
+  incomparability (not Oura-Readiness-for-some + Body-Battery-for-others). In-app, because OW's
+  scores don't cover Apple Watch (HealthKit).
+- **Missing metric = "—"**, never a fake 0. Claude reasons with what's there, names the gap.
+- **Provenance:** each metric carries source + time (chip/subtitle) — trust, and because methods differ.
+- **Multiple devices → per-metric best source, NEVER average** (averaging different measurement
+  methods is meaningless). Default auto (device best-known for that metric); Settings override.
+- **Measurement-method / device-switch = a discontinuity Claude must know** (like the illness flag),
+  so a trend/correlation doesn't misread a device change as a real change. Correlations run
+  source-consistent.
+- **Richness = engagement lever, not a UI branch:** more data (Oura temp/SpO₂/readiness) = richer
+  verdict; less = simpler but honest. "Connect Oura and I'll also track temperature" — the glue play.
+
+**Mockup:** `designs/suund-mockups.html` (rev 3 — Analysis · Data · Trend · Habits · Training; dark
+palette, full-height). WIP, not final — much still to refine.
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
@@ -325,7 +374,7 @@ doing five things at once.
 
 Tabs (revised 2026-07-22, detail in 2.3): **Data · Training · Habits · Analysis** + settings gear.
 
-### Data (DESIGNED 2026-07-22 — the download reason)
+### Data (DESIGNED 2026-07-22; 5 charts + trend tap-through added 2026-07-23 — see §2.5)
 The whole-picture overview Apple Health fails to give: unified, instant, contextualized. This tab
 alone has standalone value (founder: "as an Apple Watch owner I'd pay just for this overview" —
 encouraging, but founder-WTP ≠ market-WTP; validate with real target users).
@@ -374,8 +423,10 @@ The cached daily "why" — the differentiator, where "honest, not a cheerleader"
 - Accent (cornflower) only where it carries meaning (verdict keyword, recommendation, active tab).
 - Deeper archives / correlation views over time live here too (later).
 
-### Training (revised 2026-07-22 — read-only load, see 2.3)
+### Training (revised 2026-07-22; fuller read-only summary designed 2026-07-23 — see §2.5)
 - Light, read-only: training LOAD from Apple Health (workout type, duration, calories, HR) + trend.
+- Summary (all read-only, from Health): active-time cumulative · cardio load + optimal band ·
+  intensity/zone mix · consistency heatmap · HRR · recent workouts (easy/hard tag). Detail in §2.5.
 - NO workout logger, NO plan/generator (don't double-log vs Strong/Hevy; Suund out-reasons them).
 - Feeds Analysis: load → recovery, and eating-adequacy vs load.
 
@@ -436,7 +487,8 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   their own? (trust, depth, brand, community — built with first users during the window.) Core of the
   positioning/community session. Not solved.
 - Coros/Wahoo ingestion gaps (Coros = OW soon, Wahoo = not on OW). Revisit when serving them matters.
-- Analysis + Data + onboarding screen detail — not designed yet (next design sessions before build).
+- Analysis · Data (+ trend) · Training now designed (§2.3–2.5). ONBOARDING still not designed — the
+  last screen before build. Wearable-heterogeneity handling RESOLVED 2026-07-23 (§2.5).
 - Eating adequacy UX — how "eating enough vs load" is shown; profile capture for the target.
 - Bloodwork v2 — photo/PDF → Claude parse → Data section. Deferred.
 - Community — NEXT PLANNING SESSION'S TOPIC. Involving people, comparing data between users,
@@ -502,6 +554,20 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   Wedge decided = cheaper (~€4–5) + radically simpler; ship v1 regardless, find/validate the wedge with
   real users. Onboarding: lean flow proposed (1 mandatory HealthKit permission → instant value from
   Apple Health history → habits/profile deferred) but NOT finalized — resume here next.
+- **2026-07-23** — Data + Training screen detail designed, and wearable-heterogeneity handling
+  resolved (§2.5). Data = 3 scores + 5 chart cards (HRV / VO₂max / total sleep / training load /
+  total kcal), sparkline-per-metric, tap-through Trend screen (Today/Week/Month/Year + records;
+  community comparison as a locked row for later). Training upgraded from "too thin" to a real
+  read-only summary (active-time cumulative, cardio load + optimal band, zone mix, consistency
+  heatmap, HRR, recent workouts with easy/hard tags) — still no logger/plan. Wearable differences
+  (Oura richer than Garmin): metric-first not device-first, OW normalizes, own 0–100 scores uniform
+  across sources, "—" for gaps, provenance per metric, per-metric best source (never average),
+  device-switch = a discontinuity Claude must know, richness = engagement lever. Borrowed from Bevel
+  (sparklines, trend screen, consistency heatmap, "copy yesterday", tri-state toggle); rejected its
+  clutter (Biological Age, strength-volume radar, workout templates, CGM). Mockup:
+  designs/suund-mockups.html (rev 3, 5 screens, dark palette, full-height) — WIP. NEXT: onboarding
+  design, then build (design system first). Ops: git sync tightened (pull-before/push-after per
+  machine; this local repo had been stale since 07-13, fixed via pull).
 
 ---
 
