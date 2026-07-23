@@ -334,10 +334,27 @@ encouraging, but founder-WTP ≠ market-WTP; validate with real target users).
 - Manual measured markers surface here too: lactate (v1, 3-point) + bloodwork (v2).
 - **No Claude summary here** — scores are cheap local math, instant, no API. The "why" is Analysis.
 
-### Analysis (LANDING page, designing next after Training)
-- The cached daily "why" + recommendation — the hero. Global verdict tying inputs → outputs
-  (measured + subjective), incl. training-load and eating-adequacy assessment.
-- Deep archives / correlation views live here too. Detail TBD.
+### Analysis (DESIGNED 2026-07-22 — LANDING page)
+The cached daily "why" — the differentiator, where "honest, not a cheerleader" lives most.
+- **Read-only in v1** (chat deferred until users + money). Computed ONCE after the morning sync,
+  cached, shown instantly on every open that day (no per-open API cost).
+- **Three layers, each a distinct job — NO repetition between them:**
+  - **Verdict** = the causal read/story (how you are + why, connecting inputs→outputs). Does NOT
+    enumerate the metrics/numbers — that's the chips' job.
+  - **Chips** = the discrete factors + numbers that drove today ("3 days alcohol-free", "HRV +8%",
+    "Late caffeine", "Deep sleep −40m"). Tappable.
+  - **Chip detail (read-only)** = the mechanism behind a chip ("caffeine 21:40 → deep sleep ~22%
+    lower, based on 12 nights"). Static, pre-computed — NOT a chat.
+- **Chip model: fixed vocabulary, dynamic selection.** Chips are structured factors from a known set
+  (habits, HRV/sleep/load vs baseline, etc.); each day surface the 3–5 that crossed a threshold / are
+  notable. Cap 3–5. Calm day = few chips or an honest "nothing pulling on you today." Structured
+  (deterministic, tappable), not free-text — required for read-only.
+- **One recommendation** — actionable ("keep the streak, move coffee before 2pm").
+- **Progressive reasoning (honest):** early = simple observations; mature = learned correlations
+  ("HRV drops ~12% after alcohol"). Claude is honest which; no fabricated patterns. Cold-start:
+  "still learning your patterns, N days."
+- Accent (cornflower) only where it carries meaning (verdict keyword, recommendation, active tab).
+- Deeper archives / correlation views over time live here too (later).
 
 ### Training (revised 2026-07-22 — read-only load, see 2.3)
 - Light, read-only: training LOAD from Apple Health (workout type, duration, calories, HR) + trend.
@@ -362,7 +379,7 @@ Done: Etapp 0 (setup, both machines) · Etapp 1 (OW + MCP + Claude, real data) �
 Backend proxy (key server-side, rate limits) · Domain/email infrastructure (2026-07-21).
 
 NEXT:
-1. Product design per block: Habits · Training · Lactate ✓ (2026-07-22) → Analysis → Data + onboarding.
+1. Product design per block: Habits · Training · Lactate · Data · Analysis ✓ (2026-07-22) → onboarding (last).
 2. Structure: design system (theme/tokens.ts, locked dark palette) + i18n — BEFORE building more
    screens. Build ON the design system from day one (don't style throwaway, then redo).
 3. Habits + Training log — build EARLY: they generate the data Analysis later needs.
@@ -459,6 +476,10 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   devices), full vitals list (HRV/RHR/resp/SpO2/sleep+stages/steps/active kcal/load/VO2max/nutrition;
   skin-temp extended), context vs baseline, trends, no Claude (that's Analysis). Signal: an Apple
   Watch owner might pay for the overview alone → informs pricing (overview free vs paid).
+  Analysis block designed (landing): read-only daily verdict (cached post-sync); three non-repeating
+  layers = verdict (causal story) · chips (discrete factors+numbers, tappable) · chip detail (static
+  mechanism). Chip model = fixed vocabulary + dynamic selection, cap 3–5, honest cold-start. Mockup
+  built + reviewed. Only onboarding left before build.
 
 ---
 
