@@ -307,10 +307,32 @@ doing five things at once.
 
 Tabs (revised 2026-07-22, detail in 2.3): **Data · Training · Habits · Analysis** + settings gear.
 
-### Data (rebuild — was "Home")
-- Pure vitals, synced: HRV, RHR, sleep, steps, calories + macros (from Health).
-- Manual measured markers live here too: lactate (v1, 3-point) + bloodwork (v2). Values + trends.
-- Fastest place to see HRV — sync is a button, "sync + show me now" instant. No Claude summary here.
+### Data (DESIGNED 2026-07-22 — the download reason)
+The whole-picture overview Apple Health fails to give: unified, instant, contextualized. This tab
+alone has standalone value (founder: "as an Apple Watch owner I'd pay just for this overview" —
+encouraging, but founder-WTP ≠ market-WTP; validate with real target users).
+- **Sync button** — instant, top. Faster than hunting HRV in Apple Health.
+- **3 hero scores, 0–100** (the headline): **Recovery** (HRV+RHR+sleep vs baseline) · **Sleep**
+  (duration+stages) · **Load** (workouts+energy+steps). Suund's OWN scores, computed the SAME way
+  across all devices — this solves cross-device incomparability (one score, not Oura-Readiness-for-
+  some + Body-Battery-for-others). Compute IN-APP from the normalized snapshot: OW's scores only
+  cover OW-ingested devices (Garmin/Polar/Suunto), NOT Apple Watch (HealthKit) — so the canonical
+  score must be ours, uniform across sources (OW is MIT — can reuse its scoring logic in-app).
+- **Scores honest, not black-box:** a NUMBER (not a band), BUT appears from DAY 2 (today vs
+  yesterday); baseline widens to a rolling avg (7/30d) as data accumulates ("calibrating, N days");
+  tap-through shows what drove it; personal baseline (your history, not a population norm); "—" when
+  data insufficient. Day-over-day alone is noisy — widen the window ASAP. Transparent score = an
+  edge vs WHOOP/Oura black boxes.
+- **Vitals list (each with context vs baseline; "—" if missing; tap → 7/30/90d trend):**
+  - Recovery: HRV (nighttime RMSSD), RHR, respiratory rate, SpO2
+  - Sleep: duration + stages (deep/REM/light/awake)
+  - Activity/Load: steps, active energy (kcal burned), workouts/training load, VO2max
+  - Nutrition: energy consumed (kcal) + macros (protein/carbs/fat) — from Health; "—" if not logged
+  - Extended (show only if the device provides it): skin-temperature deviation
+- Energy burned + consumed shown side-by-side (visual polish); their difference feeds Analysis
+  ("eating enough vs load").
+- Manual measured markers surface here too: lactate (v1, 3-point) + bloodwork (v2).
+- **No Claude summary here** — scores are cheap local math, instant, no API. The "why" is Analysis.
 
 ### Analysis (LANDING page, designing next after Training)
 - The cached daily "why" + recommendation — the hero. Global verdict tying inputs → outputs
@@ -324,7 +346,9 @@ Tabs (revised 2026-07-22, detail in 2.3): **Data · Training · Habits · Analys
 
 ### Habits (DESIGNED 2026-07-22 — full spec in 2.3)
 - Curated library, progressive precision, enter-once-default, two-tier tap, 4 time buckets, habit
-  types (event / load / category / stack / flag), v1 list. Mood/energy moved to output.
+  types (event / load / category / stack / flag), v1 list.
+- Mood + energy are OUTPUTS by role, but LOGGED here (quick daily check-in sits with the other quick
+  daily taps); they surface in Analysis as outputs, not as Habits/input data.
 
 ### Settings (gear icon, not a tab)
 - Connected devices, language, subscription, profile (weight/height/age/goal for eating target).
@@ -369,6 +393,9 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   moot — we don't build a logger). Lactate = v1 manual, 3-point protocol.
 - **Pricing tiers (Free/Plus/Pro) need RE-DERIVATION** — the redesign (Eating-logger out, Training
   read-only, lactate v1, 4 tabs) changed what sits in each layer. Separate session, with community.
+  Key tension surfaced 2026-07-22: the Data overview IS the download reason AND looks monetizable —
+  so is it the FREE hook (protect acquisition) or the paid product? Likely: overview free, depth
+  (Claude analysis, history, correlations) paid. Decide in the pricing session.
 - **DEFENSIBILITY — the big open one (see §2.4).** Positioning "WHOOP's whole picture on the wearable
   you already own" is an acquisition HOOK, not a moat. What keeps users when Apple/Garmin/Google ship
   their own? (trust, depth, brand, community — built with first users during the window.) Core of the
@@ -427,6 +454,11 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   whole picture on the wearable you already own." Defensibility = open (acquisition hook, not moat).
   Full analysis in §2.4. NEXT: design Analysis + onboarding, then build (design system first);
   separate session for positioning/community/pricing.
+  Data block designed: whole-picture overview (the download reason) — 3 own 0–100 scores (Recovery/
+  Sleep/Load, honest & transparent, from day 2 with widening baseline, computed in-app uniform across
+  devices), full vitals list (HRV/RHR/resp/SpO2/sleep+stages/steps/active kcal/load/VO2max/nutrition;
+  skin-temp extended), context vs baseline, trends, no Claude (that's Analysis). Signal: an Apple
+  Watch owner might pay for the overview alone → informs pricing (overview free vs paid).
 
 ---
 
