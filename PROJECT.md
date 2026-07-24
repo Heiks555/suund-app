@@ -455,6 +455,65 @@ deactivate/reorder tiles).
   feels crippled) · opaque "performance %" scores ("fitness 95%" — of what?) · stock lifestyle photos ·
   medical breadth as headline cards (blood glucose / pressure) · overloaded Home (8 sections at once).
 
+### 2.8 DATA SCREEN FINALIZED + SCORE LOGIC + RECOVERY MARKERS (decided 2026-07-24)
+
+**Layout order:** 4 scores → vitals (grouped) → graphs. Filter chips (Favorites/Activity/Sleep/Food)
+REMOVED — a plain scroll is simpler.
+
+**FOUR top scores (was three).** Own 0–100, personal baseline, transparent (tap = drivers),
+"calibrating" until history.
+- **Recovery** — higher = better. Inputs (overnight): HRV vs baseline (heaviest), RHR vs baseline,
+  respiratory/temp deviation (illness signal).
+- **Sleep** — higher = better. Duration vs need + restorative-stage quality + low fragmentation.
+- **Load** — **NEUTRAL magnitude**, NOT coloured good/bad. It's how much training stress you carry.
+- **Energy** (NEW, 4th) — the day's balance = **eaten − burned** (burned = basal + active energy;
+  active energy = whole-day movement incl. workouts, NOT just workouts). Shows "—" if food not
+  logged (no fake deficit). Framed as **fuelling for training, NOT calorie-counting** (§2.3; also a
+  wellbeing guard — don't encourage restriction). Neutral.
+
+**TRAINING LOAD — defined.** = duration × HR-intensity (TRIMP / Apple "Cardio Load"), NOT kcal
+(kcal is a weak proxy — duration/mass-driven, ignores intensity; kcal only a fallback when HR is
+missing). Layers: per-workout load → **acute (7-day)** vs **chronic (28-day)** → ratio = status
+(0.8–1.3 optimal, >1.5 spike/risk, <0.8 detraining). **Load score = acute 7-day vs personal
+chronic baseline** ("stress carried into today"; a rest day still carries the week's load).
+Judgment ("is that right for you?") comes from the target band + Recovery pairing in Analysis, not
+from colouring the score. ("Training load: Moderate" as a vague word was REMOVED from Data vitals.)
+
+**ARROW + BASELINE rule.** Every vital shows **value + baseline** ("68 ms · usual 63"). Arrow =
+direction (▲/▼ vs baseline); **colour = metric-aware valence** — HRV ▲ green, **RHR ▼ green**
+(lower is better), respiratory/temp deviation either way = amber. No naive "up = green".
+
+**VITALS grouping:** Recovery [Vitals: HRV · RHR · respiratory · SpO₂ ("—" device can't)] +
+[**Recovery signals** — 5 markers, **collapsed by default**, tap ＋ to expand — keeps the default
+simple] · Sleep [duration · stages · awake] · Activity & Energy [steps · active energy (day burn) ·
+energy in (eaten) · balance · macros] · Markers [VO₂max (fitness, moved here) · skin temp · lactate
+"—" · bloodwork "—", + Add].
+
+**RECOVERY MARKERS — the 5 (v1), depth without clutter.** Placement principle: derived markers are
+**visible under their score, collapsed** (not a hidden tap-through, not new top cards); workout-origin
+ones ALSO appear in Training; the "why" that ties them is Analysis. They are **algorithmic estimates,
+not medical measurements** (stated in UI).
+- Overnight: **Recovery Timing** (a RANGE not exact time — Apple HRV too sparse; from HR curve +
+  sleep) · **Sleep HR Dip** (night HR drop %) · **Recovery Consistency** (n/7 nights, needs weeks →
+  calibrating).
+- From workouts: **Heart-Rate Recovery** (1-min drop; also Training) · **Cardiac Drift** (HR creep at
+  steady pace; steady cardio only; also Training).
+- Deferred: HRV Stability (Apple HRV too sparse), Breathing Stability, Training Monotony, Load
+  Absorption (v1.5), Recovery Efficiency (experimental — validate first), **Personal Recovery Cost**
+  = the input→output payoff ("late training delays recovery ~74 min") — needs weeks + Claude, comes
+  LAST; it is the moat sentence made concrete.
+- **Strategic note:** this depth layer may be the answer to the open "wedge vs Bevel / defensibility"
+  question (§2.4/§5) — endurance-grade recovery STORY vs Bevel's single recovery %. Breadth = who we
+  serve (any Apple Watch owner); depth = reasoning quality for the serious ones. Not either/or.
+
+**GRAPHS (below vitals, range 7/30/90):** HRV (with a **baseline line**) · Energy in vs out (per
+day) · **Load & fuel** (NEW — training-load bars overlaid with energy-balance line: high load + low
+balance = under-fuelled, at a glance) · Sleep · Load. Each vital/graph taps into its full trend
+(Today/Week/Month/Year + records, §2.5).
+
+**Mockup:** designs/suund-data.html (Data, Recovery signals expanded). This supersedes the Data
+panel in designs/suund-mockups.html.
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
@@ -672,6 +731,16 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   Sonar's clutter (aggressive Pro-gating, opaque "performance %" scores, stock photos, medical-breadth
   cards, overloaded Home). Full detail §2.7. NEXT: cold-start/empty-states pass, then paywall shell
   (tier CONTENTS wait for the separate pricing session), then build (design system first).
+- **2026-07-24 (cont.)** — Cold-start states LOCKED (3 honest states: "—" device can't · Pending
+  coming · calibrating computing; day-1 Habits = pre-activated starter set). Then a deep detail pass
+  on the DATA screen (full spec §2.8): reordered to scores→vitals→graphs, filter chips removed; added
+  a 4th "Energy" score (eaten−burned balance); defined all score logic + training load (HR-TRIMP,
+  acute:chronic, NOT kcal); metric-aware coloured arrows + baseline always shown; 5 recovery markers
+  (Recovery Timing/Sleep HR Dip/HRR/Cardiac Drift/Recovery Consistency) visible under Recovery but
+  collapsed by default; VO₂max → Markers; new "Load & fuel" combined graph + HRV baseline line.
+  Flagged: the recovery-depth layer may be the wedge/defensibility answer vs Bevel. Mockup:
+  designs/suund-data.html. NEXT screens to detail: Analysis · Training · Habits (log) · then cold-start
+  visuals + paywall shell.
 
 ---
 
