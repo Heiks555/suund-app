@@ -364,6 +364,48 @@ radar, workout templates / Strength Builder (we don't log workouts), CGM / blood
 **Mockup:** `designs/suund-mockups.html` (rev 3 — Analysis · Data · Trend · Habits · Training; dark
 palette, full-height). WIP, not final — much still to refine.
 
+### 2.6 ACCOUNTS, PHASING + GO-TO-MARKET (decided 2026-07-23)
+
+**Accounts = Sign in with Apple (1-tap).** Stable identity, zero forms, and Apple requires it alongside
+any other login. This IS both the fast onboarding AND the real-account foundation — not a conflict.
+Onboarding = Apple sign-in (1 tap) + HealthKit permission (1 tap) → instant value from Apple Health
+history. Profile data (weight/height/goal) deferred, optional, asked when relevant. Replaces the OW
+"first user" hack (also an App Store prerequisite).
+
+**Foundation to build in v1 (invisible plumbing, so social/B2B are additive, not a rewrite):**
+- Real user accounts (Sign in with Apple).
+- Data model leaves the seam: `user_id` + per-metric visibility/consent flag + extensible group concept.
+- Build NO sharing/leaderboard/B2B UI in v1 — just don't hardcode single-user / private-only.
+
+**Phasing:**
+- **v1 (core):** individual app exactly as the mocks (Data · Training · Habits · Analysis) + real accounts
+  + group-ready data model. Ships for organic launch + validating the app + the simplicity wedge.
+- **v1.5 (first prioritized fast-follow): group leaderboard + opt-in metric sharing.** NOT in the v1
+  individual app. Timed to the first B2B pitch. Why then, not sooner: leaderboard value = DENSITY —
+  organic trickle = empty leaderboard = no hook; B2B bulk onboarding (e.g. 50 employees at once) = instant
+  density = the leaderboard IS the hook and the sale. And you can't pitch a company without a working demo,
+  so it must exist before the first serious pitch. Lean pilot = join-code + opt-in + one leaderboard; defer
+  heavy org-admin / billing / web dashboard.
+- **Phase 3 (fuller B2B + coach):** organizations, roles/admin, org billing, coach-of-a-group dashboard.
+  Coach dashboard = group leaderboard with different roles — SAME engine (accounts + groups + consent),
+  two UIs. Global percentile ("VO2max vs age/sex cohort") also here — needs a user base to be meaningful.
+  All sharing = explicit, granular, revocable consent (GDPR special-category data); minors (youth clubs)
+  need parental consent + extra care. Not legal advice — get proper counsel on consent flows.
+- **Android:** iOS first (beachhead = Apple Watch owners). RN carries the code; Health Connect is the main
+  new work; backend is platform-agnostic. Gated by iOS traction, not architecture. ~+30–50% of iOS effort.
+- **Apple Watch app + widgets: post-v1 (retention phase), NOT v1.** Not needed for core — Suund gets Watch
+  data via HealthKit on the phone; a Watch app only adds convenience (complication with your score =
+  brand/retention on every wrist glance; wrist quick-log = zero-friction habit logging). Technically a
+  SEPARATE native watchOS (Swift/SwiftUI) build — NOT the Expo/RN stack, a real complexity + new-skill jump.
+  Cheaper interim glance = iPhone home/lock-screen widget (also post-v1). v1 = iPhone only; don't split focus.
+
+**Marketing plan (founder's, 2026-07-23):**
+- Organic: app live, landing page, social (Insta/TikTok), a few ads, UGC videos (self + friends + AI-made).
+- B2B: sports/hobby clubs (in-club banners, e.g. MyFitness) + corporate wellness. The leaderboard/"game"
+  is the B2B hook — engagement companies actually care about ("who has the longest sleep this week") vs a
+  generic fitness app nobody opens. Likely the real DEFENSIBILITY too: Bevel is individual B2C; team +
+  consent + switching-cost is a moat it doesn't have. B2B = "relatively soon" per founder.
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
