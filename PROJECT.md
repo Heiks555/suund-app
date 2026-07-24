@@ -406,6 +406,55 @@ history. Profile data (weight/height/goal) deferred, optional, asked when releva
   generic fitness app nobody opens. Likely the real DEFENSIBILITY too: Bevel is individual B2C; team +
   consent + switching-cost is a moat it doesn't have. B2B = "relatively soon" per founder.
 
+### 2.7 ONBOARDING · SETTINGS · HABITS CONFIG + SONAR STEAL (decided 2026-07-24)
+
+**ONBOARDING (screen UX; flow foundation in §2.6).** Commit-first, minimal:
+Welcome (positioning line + cornflower, one CTA) → Sign in with Apple (1 tap) → HealthKit priming
+line + native permission (1 tap) → backfill moment ("pulling your last 30 days from Apple Health…")
+→ land on value.
+- **Day-1 landing = Data** (real trends immediately from Health history); the 3 scores show
+  "calibrating · day 1". From day 2 the app opens on **Analysis** (verdict ready). Rationale: day 1
+  Analysis has no overnight verdict yet, Data has real content → no empty first screen.
+- No profile/habit forms up front; contextual nudges later. **Notifications asked later** (after the
+  first daily verdict is ready), NEVER in onboarding. Chosen: commit-first (Apple 1-tap is low
+  friction; a fake-data "tease" would violate the honesty brand).
+- Honesty edge-cases: little/no Health history → "—" + "fills in as your watch records", not fake;
+  HealthKit denied → plain explainer + button to Settings (app stays honest-empty).
+
+**SETTINGS (gear icon, not a tab) — deliberately a plain iOS grouped list (simplicity = familiar).**
+Account (Apple ID · manage subscription via RevenueCat · restore purchases) · Devices & sync
+(connected sources; **per-metric source override** from §2.5; last sync) · Profile (weight/height/
+age/sex/goal — optional, contextual capture, editable here) · Preferences (language auto/EN/ET ·
+units metric/imperial · notifications) · Privacy & data (consent flags for future community · export
+· delete account, GDPR) · About (version · support · ToS · "informational, not medical advice").
+Profile capture = contextual + editable here, **never forced**.
+
+**HABITS CONFIG (the "set once" side; daily log side in §2.3).**
+Screens: Library ("Add habits", grouped by life-area — Substances · Recovery · Activity · Nutrition ·
+State; search; common surfaced, "more" reveals rest) · per-habit config sheet (enter-once defaults by
+type) · Stack builder (named bundles, dose set once, active/inactive toggle) · Manage (edit/
+deactivate/reorder tiles).
+- **Activate instantly with sensible defaults; config OPTIONAL** (refine later via Edit or first-log
+  long-press) — no setup wall (progressive precision).
+- **Config lives on the Habits tab** ("+ / Edit"), not buried in Settings. Unified **"Edit/Favorites"**
+  pattern shared with Data (choose which cards show + order + favourite).
+
+**SONAR (2nd direct competitor, alongside Bevel) — STEAL, filtered through the simplicity+honesty wedge:**
+- **Honest empty states:** "Pending data" skeleton cards (→ our day-1 calibrating state) · "No Data"
+  as an empty *labelled* chart · **"Typical Range" baseline marker** next to today's value (context
+  vs baseline, on-brand honest).
+- **Trend screen (refines §2.5):** **dashed line where data is missing** (honest gaps, NO
+  interpolation) · W/M/Y toggle · **Compare to** (2 metrics overlaid) · Favorites + Edit (reorder/
+  hide/favourite metric cards) · category filter chips (Favorites/Activity/Sleep/Nutrition).
+- **AI disclaimer gate** ("can make mistakes / general wellness only, not medical advice / not for
+  emergencies" + ToS/Privacy + Continue) before first AI use — for Analysis-chat when it ships (Apple
+  review + liability). On-brand honest.
+- **Daily target band** (Sonar "Strain Target 10–30%") → our Training optimal-band + Analysis
+  recommendation (our term = Load, not Strain). Nutrition macro ring + P/C/F bars → into Data.
+- **REJECT (Sonar anti-patterns = our edge):** aggressive Pro-gating on nearly every card (naggy,
+  feels crippled) · opaque "performance %" scores ("fitness 95%" — of what?) · stock lifestyle photos ·
+  medical breadth as headline cards (blood glucose / pressure) · overloaded Home (8 sections at once).
+
 ---
 
 ## 3. FUNCTIONALITY BY SCREEN
@@ -529,8 +578,10 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   their own? (trust, depth, brand, community — built with first users during the window.) Core of the
   positioning/community session. Not solved.
 - Coros/Wahoo ingestion gaps (Coros = OW soon, Wahoo = not on OW). Revisit when serving them matters.
-- Analysis · Data (+ trend) · Training now designed (§2.3–2.5). ONBOARDING still not designed — the
-  last screen before build. Wearable-heterogeneity handling RESOLVED 2026-07-23 (§2.5).
+- Screens now designed: Analysis · Data (+ trend) · Training (§2.3–2.5) · Onboarding · Settings ·
+  Habits CONFIG (§2.7). Wearable-heterogeneity RESOLVED (§2.5). REMAINING before build: (a) cold-start/
+  empty-states consolidation pass (patterns now exist), (b) paywall SHELL — tier contents gated on the
+  separate pricing session. Chat/AI + its disclaimer gate = deferred (Analysis read-only in v1).
 - Eating adequacy UX — how "eating enough vs load" is shown; profile capture for the target.
 - Bloodwork v2 — photo/PDF → Claude parse → Data section. Deferred.
 - Community — NEXT PLANNING SESSION'S TOPIC. Involving people, comparing data between users,
@@ -610,6 +661,17 @@ Why order matters: log-layers early (irreplaceable data), correlations late (nee
   designs/suund-mockups.html (rev 3, 5 screens, dark palette, full-height) — WIP. NEXT: onboarding
   design, then build (design system first). Ops: git sync tightened (pull-before/push-after per
   machine; this local repo had been stale since 07-13, fixed via pull).
+- **2026-07-24** — Screen-by-screen design pass (goal: fully lock product design, then build). LOCKED:
+  Onboarding (commit-first: Welcome → Apple sign-in → HealthKit → backfill → **day-1 lands on Data**,
+  Analysis from day 2; notifications deferred; honest empty edge-cases), Settings (plain iOS grouped
+  list + contextual profile), Habits CONFIG (library by life-area · activate-instantly + optional
+  config · Edit/Favorites on the Habits tab, shared with Data). Studied 2nd competitor **Sonar** (12
+  screens + video) — stole, filtered through the wedge: honest empty states ("Pending data" skeleton,
+  "Typical Range" marker), Trend refinements (dashed-line gaps, W/M/Y, Compare, Favorites/Edit), an AI
+  disclaimer gate (for chat), a daily target band (→ Load optimal-band), nutrition macro ring. Rejected
+  Sonar's clutter (aggressive Pro-gating, opaque "performance %" scores, stock photos, medical-breadth
+  cards, overloaded Home). Full detail §2.7. NEXT: cold-start/empty-states pass, then paywall shell
+  (tier CONTENTS wait for the separate pricing session), then build (design system first).
 
 ---
 
